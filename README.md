@@ -10,4 +10,4 @@ Windows recognizes the dongle as HID device.
 
 All the work was done by https://github.com/kralo and Ralph Babel, http://babel.de, for finding the checksum and the resend-frame behavior. 
 
-So blame me for the bugs in the java implementation and thank those guys above for examing th protocol!
+So blame me for the bugs in the java implementation and thank those guys above for examing the protocol!

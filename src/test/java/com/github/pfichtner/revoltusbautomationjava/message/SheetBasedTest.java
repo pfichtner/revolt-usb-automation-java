@@ -32,11 +32,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class GenerateMessageTest {
+public class SheetBasedTest {
 
 	private Map<ColumnHeader, String> row;
 
-	public GenerateMessageTest(Map<ColumnHeader, String> row) {
+	public SheetBasedTest(Map<ColumnHeader, String> row) {
 		this.row = row;
 	}
 
@@ -50,8 +50,8 @@ public class GenerateMessageTest {
 				Outlet.forString(this.row.get(col("B"))),
 				State.forString(this.row.get(col("C"))));
 
-		MessageGenerator generator = new MessageGenerator(function, rawFrame,
-				rawId, this.row.get(col("Z")));
+		MessageGenerator generator = new MessageGenerator().rawFrames(rawFrame)
+				.rawId(rawId).msgFin(this.row.get(col("Z")));
 
 		Map<ColumnHeader, String> actual = new HashMap<ColumnHeader, String>();
 
@@ -62,31 +62,31 @@ public class GenerateMessageTest {
 						'0', 8));
 		actual.put(col("M"), function.asByte());
 		actual.put(col("N"), String.valueOf(function.asInt()));
-		actual.put(col("O"), String.valueOf(generator.getSum()));
-		actual.put(col("P"), generator.getChecksum());
-		actual.put(col("Q"), generator.getChecksum());
-		String checkSum = padLeft(intToBin(hex2Int(generator.getChecksum())),
-				'0', 8);
+		actual.put(col("O"), String.valueOf(generator.getSum(function)));
+		actual.put(col("P"), generator.getChecksum(function));
+		actual.put(col("Q"), generator.getChecksum(function));
+		String checkSum = padLeft(
+				intToBin(hex2Int(generator.getChecksum(function))), '0', 8);
+		actual.put(col("R"), checkSum);
 		String checksumByte1 = checkSum.substring(0, 4);
 		String checksumByte2 = checkSum.substring(4);
-		actual.put(col("R"), checkSum);
 		actual.put(col("S"), checksumByte1);
 		actual.put(col("T"), checksumByte2);
 		actual.put(col("U"), String.valueOf(binToInt(checksumByte1)));
 		actual.put(col("V"), String.valueOf(binToInt(checksumByte2)));
-		actual.put(col("W"), String.valueOf(generator.getRawChecksum()));
+		actual.put(col("W"), String.valueOf(generator.getRawChecksum(function)));
 		actual.put(col("Y"), padLeft(intToHex(rawFrame), '0', 2));
 		assertRowEquals(row, actual);
 
 		assertEquals(
 				row.get(col("AA")).toLowerCase(),
 				msgId + padRight(intToHex(function.asInt()), '0', 2)
-						+ generator.getChecksum().toLowerCase()
+						+ generator.getChecksum(function).toLowerCase()
 						+ this.row.get(col("X"))
 						+ padLeft(intToHex(rawFrame), '0', 2)
 						+ this.row.get(col("Z")).toLowerCase());
 		assertEquals(this.row.get(col("H")).toLowerCase(), generator
-				.hexMessage().toLowerCase());
+				.hexMessage(function).toLowerCase());
 	}
 
 	private void assertRowEquals(Map<ColumnHeader, String> expected,
@@ -100,7 +100,7 @@ public class GenerateMessageTest {
 
 	// @Parameters
 	public static List<Object[]> parametersFromFile() throws IOException {
-		return toObjectArrayList(loadSheet(GenerateMessageTest.class
+		return toObjectArrayList(loadSheet(SheetBasedTest.class
 				.getResource("/revolt-usb-hid-payload-protocol.ods")));
 	}
 

@@ -9,23 +9,31 @@ public class Function {
 
 	private boolean isAll;
 	private Outlet outlet;
-	private State state;
+	private final State state;
 
-	public Function(Outlet[] outlets, State state) {
-		isAll = Outlet.isAll(outlets);
+	private Function(Outlet outlet, State state) {
+		this.outlet = outlet;
+		this.state = state;
+	}
+
+	private Function(State state) {
+		this.isAll = true;
+		this.state = state;
+	}
+
+	public static Function of(Outlet outlet, State state) {
+		return of(new Outlet[] { outlet }, state);
+	}
+
+	public static Function of(Outlet[] outlets, State state) {
+		boolean isAll = Outlet.isAll(outlets);
 		if (outlets.length != 1 && !isAll) {
 			throw new RuntimeException(
 					"Can only handle one outlet or all (got "
 							+ Arrays.toString(outlets) + ")");
 		}
-		if (!isAll) {
-			this.outlet = outlets[0];
-		}
-		this.state = state;
-	}
+		return isAll ? new Function(state) : new Function(outlets[0], state);
 
-	public static Function of(Outlet[] outlets, State state) {
-		return new Function(outlets, state);
 	}
 
 	public int asInt() {

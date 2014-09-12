@@ -34,16 +34,19 @@ public class Usb implements Closeable {
 		claimInterface(this.deviceHandle, this.interfaceNum);
 	}
 
-	public void setInterfaceNum(int interfaceNum) {
+	public Usb interfaceNum(int interfaceNum) {
 		this.interfaceNum = interfaceNum;
+		return this;
 	}
 
-	public void setOutEndpoint(byte outEndpoint) {
+	public Usb outEndpoint(byte outEndpoint) {
 		this.outEndpoint = outEndpoint;
+		return this;
 	}
 
-	public void setTimeout(TimeUnit timeUnit, long value) {
+	public Usb timeout(TimeUnit timeUnit, long value) {
 		this.timeout = timeUnit.toMillis(value);
+		return this;
 	}
 
 	private DeviceHandle getDeviceHandle(Device device) {

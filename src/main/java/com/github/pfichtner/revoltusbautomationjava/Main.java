@@ -33,7 +33,7 @@ public class Main {
 	@Option(name = "-state", required = true)
 	private State state;
 
-	private int rawFrames = 10;
+	private Integer rawFrames = 10;
 
 	@Option(name = "-rawFrames", metaVar = "How many times the frame should be sent (3-255)")
 	public void setRawFrames(int rawFrames) {
@@ -44,9 +44,9 @@ public class Main {
 	}
 
 	@Option(name = "-rawId")
-	private int rawId = 6789;
+	private Integer rawId;
 
-	private String msgFin = "0000";
+	private String msgFin;
 
 	@Option(name = "-msgFin")
 	public void setMsgFin(String msgFin) {
@@ -80,29 +80,34 @@ public class Main {
 			cmdLineParser.printUsage(System.err);
 			return;
 		}
-		Usb usb = configure(new Usb(this.vendorId, this.productId));
+		Usb usb = newUsb();
 		try {
-			usb.write(createMessageGenerator().bytesMessage());
+			usb.write(newMessageGenerator().bytesMessage(
+					Function.of(this.outlet, this.state)));
 		} finally {
 			usb.close();
 		}
 	}
 
-	private Usb configure(Usb usb) {
-		if (this.interfaceNum != null) {
-			usb.setInterfaceNum(this.interfaceNum.intValue());
-		}
-		if (this.outEndpoint != null) {
-			usb.setOutEndpoint(this.outEndpoint.byteValue());
-		}
-		if (this.timeout != null) {
-			usb.setTimeout(TimeUnit.MILLISECONDS, this.timeout.longValue());
-		}
+	private Usb newUsb() {
+		Usb usb = new Usb(this.vendorId, this.productId);
+		usb = this.interfaceNum == null ? usb : usb
+				.interfaceNum(this.interfaceNum.intValue());
+		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint
+				.byteValue());
+		usb = this.timeout == null ? usb : usb.timeout(TimeUnit.MILLISECONDS,
+				this.timeout.longValue());
 		return usb;
 	}
 
-	private MessageGenerator createMessageGenerator() {
-		return new MessageGenerator(Function.of(this.outlet, this.state),
-				this.rawFrames, this.rawId, this.msgFin);
+	private MessageGenerator newMessageGenerator() {
+		MessageGenerator generator = new MessageGenerator();
+		generator = this.rawId == null ? generator : generator
+				.rawId(this.rawId);
+		generator = this.rawFrames == null ? generator : generator
+				.rawFrames(this.rawFrames);
+		generator = this.msgFin == null ? generator : generator
+				.msgFin(this.msgFin);
+		return generator;
 	}
 }

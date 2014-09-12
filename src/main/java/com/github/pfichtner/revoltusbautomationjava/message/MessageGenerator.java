@@ -44,8 +44,9 @@ public class MessageGenerator {
 	}
 
 	public int getSum() {
-		return hex2Int(msgId.substring(0, 2)) + hex2Int(msgId.substring(2, 4))
-				+ function.asInt() * 16;
+		return hex2Int(this.msgId.substring(0, 2))
+				+ hex2Int(this.msgId.substring(2, 4)) + this.function.asInt()
+				* 16;
 	}
 
 }

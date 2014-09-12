@@ -10,7 +10,7 @@ import static java.lang.Math.ceil;
 public class MessageGenerator {
 
 	private int rawFrames = 10;
-	private String rawId = "6789";
+	private String rawId = rawIdToString(6789);
 	private String msgFin = "0000";
 
 	public MessageGenerator rawFrames(int rawFrames) {
@@ -19,8 +19,12 @@ public class MessageGenerator {
 	}
 
 	public MessageGenerator rawId(int rawId) {
-		this.rawId = padLeft(intToHex(rawId), '0', 4);
+		this.rawId = rawIdToString(rawId);
 		return this;
+	}
+
+	private static String rawIdToString(int rawId) {
+		return padLeft(intToHex(rawId), '0', 4);
 	}
 
 	public MessageGenerator msgFin(String msgFin) {

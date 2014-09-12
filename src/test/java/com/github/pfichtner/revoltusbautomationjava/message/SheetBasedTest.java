@@ -98,13 +98,13 @@ public class SheetBasedTest {
 		}
 	}
 
-	// @Parameters
+	 @Parameters
 	public static List<Object[]> parametersFromFile() throws IOException {
 		return toObjectArrayList(loadSheet(SheetBasedTest.class
 				.getResource("/revolt-usb-hid-payload-protocol.ods")));
 	}
 
-	@Parameters
+//	@Parameters
 	public static List<Object[]> parametersFromURL() throws IOException {
 		return toObjectArrayList(loadSheet(new URL(
 				"https://github.com/kralo/revolt-usb-automation-python/blob/master/revolt-usb-hid-payload-protocol.ods?raw=true")));

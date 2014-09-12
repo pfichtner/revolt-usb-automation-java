@@ -4,7 +4,7 @@
 	<artifactId>library</artifactId>
 	<parent>
 		<groupId>com.github.pfichtner.revoltusbautomationjava</groupId>
-		<artifactId>library</artifactId>
+		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 

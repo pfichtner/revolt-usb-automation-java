@@ -3,7 +3,7 @@ package revolt;
 import static revolt.message.Strings.padLeft;
 import static revolt.message.Strings.trim;
 
-import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -12,7 +12,6 @@ import org.kohsuke.args4j.Option;
 import revolt.message.Function;
 import revolt.message.MessageGenerator;
 import revolt.message.Outlet;
-import revolt.message.Primitives;
 import revolt.message.State;
 import revolt.usb.Usb;
 
@@ -55,6 +54,19 @@ public class Main {
 		this.msgFin = padLeft(msgFin, '0', length).substring(0, length);
 	}
 
+	// ------------------------------------------------------------------------
+
+	@Option(name = "--usbInterface", hidden = true)
+	private Integer interfaceNum;
+
+	@Option(name = "--usbEndpoint", hidden = true)
+	private Byte outEndpoint;
+
+	@Option(name = "--usbTimeout", hidden = true, metaVar = "usb send timeout in milliseconds")
+	private Long timeout;
+
+	// ------------------------------------------------------------------------
+
 	public static void main(String[] args) {
 		new Main().doMain(args);
 	}
@@ -68,12 +80,25 @@ public class Main {
 			cmdLineParser.printUsage(System.err);
 			return;
 		}
-		Usb usb = new Usb(this.vendorId, this.productId);
+		Usb usb = configure(new Usb(this.vendorId, this.productId));
 		try {
 			usb.write(createMessageGenerator().byteMessage());
 		} finally {
 			usb.close();
 		}
+	}
+
+	private Usb configure(Usb usb) {
+		if (this.interfaceNum != null) {
+			usb.setInterfaceNum(this.interfaceNum.intValue());
+		}
+		if (this.outEndpoint != null) {
+			usb.setOutEndpoint(this.outEndpoint.byteValue());
+		}
+		if (this.timeout != null) {
+			usb.setTimeout(TimeUnit.MILLISECONDS, this.timeout.longValue());
+		}
+		return usb;
 	}
 
 	private MessageGenerator createMessageGenerator() {

@@ -1,10 +1,10 @@
-package revolt.message;
+package com.github.pfichtner.revoltusbautomationjava.message;
 
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padRight;
 import static java.lang.Math.ceil;
-import static revolt.message.Primitives.hex2Int;
-import static revolt.message.Primitives.intToHex;
-import static revolt.message.Strings.padLeft;
-import static revolt.message.Strings.padRight;
 
 import java.math.BigInteger;
 

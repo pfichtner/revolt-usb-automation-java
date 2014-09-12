@@ -1,4 +1,4 @@
-package revolt.usb;
+package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import static org.usb4java.LibUsb.SUCCESS;
 

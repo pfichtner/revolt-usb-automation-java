@@ -1,7 +1,7 @@
-package revolt;
+package com.github.pfichtner.revoltusbautomationjava;
 
-import static revolt.message.Strings.padLeft;
-import static revolt.message.Strings.trim;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,11 +9,11 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import revolt.message.Function;
-import revolt.message.MessageGenerator;
-import revolt.message.Outlet;
-import revolt.message.State;
-import revolt.usb.Usb;
+import com.github.pfichtner.revoltusbautomationjava.message.Function;
+import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
+import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
+import com.github.pfichtner.revoltusbautomationjava.message.State;
+import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class Main {
 

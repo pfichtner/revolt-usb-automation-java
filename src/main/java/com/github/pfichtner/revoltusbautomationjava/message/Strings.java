@@ -1,4 +1,4 @@
-package revolt.message;
+package com.github.pfichtner.revoltusbautomationjava.message;
 
 import java.util.Arrays;
 

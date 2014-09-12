@@ -1,17 +1,17 @@
-package revolt.message;
+package com.github.pfichtner.revoltusbautomationjava.message;
 
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.binToInt;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToBin;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.shiftLeft;
+import static com.github.pfichtner.revoltusbautomationjava.message.Sheets.col;
+import static com.github.pfichtner.revoltusbautomationjava.message.Sheets.columnHeaders;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padRight;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;
 import static java.lang.Integer.parseInt;
 import static org.junit.Assert.assertEquals;
-import static revolt.message.Primitives.binToInt;
-import static revolt.message.Primitives.hex2Int;
-import static revolt.message.Primitives.intToBin;
-import static revolt.message.Primitives.intToHex;
-import static revolt.message.Primitives.shiftLeft;
-import static revolt.message.Sheets.col;
-import static revolt.message.Sheets.columnHeaders;
-import static revolt.message.Strings.padLeft;
-import static revolt.message.Strings.padRight;
-import static revolt.message.Strings.trim;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,11 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import revolt.message.Function;
-import revolt.message.MessageGenerator;
-import revolt.message.Outlet;
-import revolt.message.State;
 
 @RunWith(Parameterized.class)
 public class GenerateMessageTest {

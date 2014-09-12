@@ -1,7 +1,7 @@
-package revolt.message;
+package com.github.pfichtner.revoltusbautomationjava.message;
 
-import static revolt.message.Primitives.intToHex;
-import static revolt.message.Strings.padLeft;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
+import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
 
 import java.util.Arrays;
 

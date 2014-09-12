@@ -82,7 +82,7 @@ public class Main {
 		}
 		Usb usb = configure(new Usb(this.vendorId, this.productId));
 		try {
-			usb.write(createMessageGenerator().byteMessage());
+			usb.write(createMessageGenerator().bytesMessage());
 		} finally {
 			usb.close();
 		}

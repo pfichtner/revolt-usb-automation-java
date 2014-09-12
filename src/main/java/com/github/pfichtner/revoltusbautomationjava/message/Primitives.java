@@ -1,5 +1,7 @@
 package com.github.pfichtner.revoltusbautomationjava.message;
 
+import java.math.BigInteger;
+
 public final class Primitives {
 
 	private Primitives() {
@@ -20,6 +22,10 @@ public final class Primitives {
 
 	public static int hex2Int(String hex) {
 		return Integer.parseInt(hex, 16);
+	}
+
+	public static byte[] hexToBytes(String hex) {
+		return new BigInteger(hex, 16).toByteArray();
 	}
 
 	public static int shiftLeft(int value, int positions) {

@@ -1,12 +1,11 @@
 package com.github.pfichtner.revoltusbautomationjava.message;
 
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hexToBytes;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padRight;
 import static java.lang.Math.ceil;
-
-import java.math.BigInteger;
 
 public class MessageGenerator {
 
@@ -31,8 +30,8 @@ public class MessageGenerator {
 				+ msgFin;
 	}
 
-	public byte[] byteMessage() {
-		return new BigInteger(hexMessage(), 16).toByteArray();
+	public byte[] bytesMessage() {
+		return hexToBytes(hexMessage());
 	}
 
 	public String getChecksum() {

@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>library</module>
+		<module>swingui</module>
 	</modules>
 
 

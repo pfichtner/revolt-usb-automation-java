@@ -90,7 +90,7 @@ public class Main {
 	}
 
 	private Usb newUsb() {
-		Usb usb = Usb.newInstance().connect(this.vendorId, this.productId);
+		Usb usb = Usb.newInstance(this.vendorId, this.productId).connect();
 		usb = this.interfaceNum == null ? usb : usb
 				.interfaceNum(this.interfaceNum.intValue());
 		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint

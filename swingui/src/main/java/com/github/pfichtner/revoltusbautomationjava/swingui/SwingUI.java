@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
@@ -47,7 +48,8 @@ public class SwingUI extends JFrame {
 		}
 		addRow(c, "All");
 
-		JLabel status = new JLabel(" ");
+		JLabel status = new JLabel("Ready");
+		status.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		getContentPane().add(status, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {

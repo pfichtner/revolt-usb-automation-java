@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.Thread.UncaughtExceptionHandler;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,7 +28,6 @@ import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
 
-// TODO Add menu bar analog to EXE
 public class SwingUI extends JFrame {
 
 	private static final short vendorId = (short) 0xffff;
@@ -64,9 +62,10 @@ public class SwingUI extends JFrame {
 		addRow(buttonPanel, "All");
 
 		status = new JLabel();
-		disconneted();
 		status.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		getContentPane().add(status, BorderLayout.SOUTH);
+
+		disconneted();
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -79,7 +78,8 @@ public class SwingUI extends JFrame {
 		});
 		pack();
 
-		installUncaughtExceptionHandler();
+		Thread.setDefaultUncaughtExceptionHandler(new JLabelExceptionHandler(
+				status));
 
 		if (usb.hasHotplug()) {
 			usb.registerCallback(new UsbHotPlugEventListener() {
@@ -103,32 +103,41 @@ public class SwingUI extends JFrame {
 		}
 	}
 
-	private void installUncaughtExceptionHandler() {
-		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e) {
-				try {
-					e.printStackTrace();
-					status.setText(e.getMessage());
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-
-			}
-		});
-	}
-
 	private JMenuBar createMenuBar() {
 		JMenuBar menu = new JMenuBar();
-		JMenu file = new JMenu("System");
-		JMenuItem exitMi = new JMenuItem("Exit");
-		exitMi.addActionListener(new ActionListener() {
+		menu.add(system());
+		menu.add(settings());
+		return menu;
+	}
+
+	private JMenu system() {
+		JMenu system = new JMenu("System");
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		file.add(exitMi);
-		menu.add(file);
-		return menu;
+		system.add(exit);
+		return system;
+	}
+
+	private JMenu settings() {
+		JMenu settings = new JMenu("Settings");
+		JMenuItem ds = new JMenuItem("Device settings");
+		ds.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openDeviceSettings();
+			}
+
+			private void openDeviceSettings() {
+				// TODO Add Frame 3-255 (10)
+				// TODO Add ID 0-65535 (6789)
+			}
+
+		});
+		settings.add(ds);
+		return settings;
 	}
 
 	private void connected() {
@@ -149,16 +158,16 @@ public class SwingUI extends JFrame {
 		}
 	}
 
-	private void addRow(Container contentPane, String name) {
+	private void addRow(Container c, String name) {
 		JButton onButton = new JButton("On");
 		onButton.addActionListener(newaddActionListener(name, State.ON));
-		contentPane.add(onButton);
+		c.add(onButton);
 		JLabel label = new JLabel(name);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(label);
+		c.add(label);
 		JButton offButton = new JButton("Off");
 		offButton.addActionListener(newaddActionListener(name, State.OFF));
-		contentPane.add(offButton);
+		c.add(offButton);
 	}
 
 	private ActionListener newaddActionListener(final String name,

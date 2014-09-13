@@ -9,22 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.NumberFormat;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
-import javax.swing.text.NumberFormatter;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
@@ -49,6 +44,10 @@ public class SwingUI extends JFrame {
 	private boolean connected;
 
 	private JComponent buttonPanel;
+
+	protected int id = 10;
+
+	protected int frame = 6789;
 
 	public SwingUI() {
 		setTitle("SwingUI");
@@ -136,35 +135,10 @@ public class SwingUI extends JFrame {
 			}
 
 			private void openDeviceSettings() {
-
-				JDialog jDialog = new JDialog(SwingUI.this, true);
-				jDialog.setResizable(false);
-				jDialog.setLocationRelativeTo(jDialog.getOwner());
-				jDialog.setLayout(new GridLayout(3, 2));
-				Container c = jDialog.getContentPane();
-				c.add(new JLabel("Frame 3-255"));
-				c.add(createNumericField(10, 3, 255));
-				c.add(new JLabel("ID 0-65535"));
-				c.add(createNumericField(6789, 0, 65535));
-				c.add(new JButton("Ok"));
-				c.add(new JButton("Cancel"));
-				jDialog.pack();
-				jDialog.setVisible(true);
-			}
-
-			private JFormattedTextField createNumericField(int current,
-					int min, int max) {
-				NumberFormat nf = NumberFormat.getInstance();
-				nf.setGroupingUsed(false);
-				NumberFormatter formatter = new NumberFormatter(nf);
-				formatter.setValueClass(Integer.class);
-				formatter.setMinimum(min);
-				formatter.setMaximum(max);
-				formatter.setAllowsInvalid(false);
-				JFormattedTextField textField = new JFormattedTextField(
-						formatter);
-				textField.setValue(current);
-				return textField;
+				SettingsDialog settings = new SettingsDialog(SwingUI.this);
+				settings.setId(SwingUI.this.id);
+				settings.setFrame(SwingUI.this.frame);
+				settings.setVisible(true);
 			}
 
 		});

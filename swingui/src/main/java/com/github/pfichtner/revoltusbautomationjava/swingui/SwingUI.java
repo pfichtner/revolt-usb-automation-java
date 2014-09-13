@@ -49,15 +49,17 @@ public class SwingUI extends JFrame {
 	public SwingUI() {
 		setTitle("SwingUI");
 		setResizable(false);
-		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
 		setLayout(new BorderLayout());
 
 		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(5, 3, 15, 5));
+		buttonPanel.setLayout(new GridLayout(6, 3, 15, 5));
 		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(buttonPanel, BorderLayout.CENTER);
+
+		addHeader(buttonPanel);
+
 		for (int i = 0; i < 4; i++) {
 			addRow(buttonPanel, String.valueOf(i + 1));
 		}
@@ -79,6 +81,7 @@ public class SwingUI extends JFrame {
 
 		});
 		pack();
+		setLocationRelativeTo(null);
 
 		Thread.setDefaultUncaughtExceptionHandler(new JLabelExceptionHandler(
 				status));
@@ -103,6 +106,19 @@ public class SwingUI extends JFrame {
 		} else {
 			this.status.setText("System doesn't support hotplug");
 		}
+	}
+
+	private static void addHeader(JComponent buttonPanel) {
+		JLabel on = new JLabel("On");
+		on.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(on);
+
+		JLabel dummy = new JLabel();
+		buttonPanel.add(dummy);
+
+		JLabel off = new JLabel("Off");
+		off.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(off);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -166,13 +182,13 @@ public class SwingUI extends JFrame {
 	}
 
 	private void addRow(Container c, String name) {
-		JButton onButton = new JButton("On");
+		JButton onButton = new SquareButton();
 		onButton.addActionListener(newaddActionListener(name, State.ON));
 		c.add(onButton);
 		JLabel label = new JLabel(name);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		c.add(label);
-		JButton offButton = new JButton("Off");
+		JButton offButton = new SquareButton();
 		offButton.addActionListener(newaddActionListener(name, State.OFF));
 		c.add(offButton);
 	}

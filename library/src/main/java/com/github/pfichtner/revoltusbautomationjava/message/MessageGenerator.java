@@ -18,9 +18,17 @@ public class MessageGenerator {
 		return this;
 	}
 
+	public int getRawFrames() {
+		return this.rawFrames;
+	}
+
 	public MessageGenerator rawId(int rawId) {
 		this.rawId = rawIdToString(rawId);
 		return this;
+	}
+
+	public int getRawId() {
+		return hex2Int(this.rawId);
 	}
 
 	private static String rawIdToString(int rawId) {

@@ -3,6 +3,8 @@ package com.github.pfichtner.revoltusbautomationjava.swingui;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.JButton;
@@ -18,19 +20,33 @@ public class SettingsDialog extends JDialog {
 	private JFormattedTextField frameField = createNumericField(3, 255);
 	private JFormattedTextField idField = createNumericField(0, 65535);
 
+	private boolean okWasPressed;
+
 	public SettingsDialog(Frame owner) {
 		super(owner, true);
 		setResizable(false);
 		setLocationRelativeTo(owner);
 		setLayout(new GridLayout(3, 2));
-		Container c = this.getContentPane();
+		Container c = getContentPane();
 		c.add(new JLabel("Frame 3-255"));
-
 		c.add(frameField);
 		c.add(new JLabel("ID 0-65535"));
 		c.add(idField);
-		c.add(new JButton("Ok"));
-		c.add(new JButton("Cancel"));
+		JButton okButton = new JButton("Ok");
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				okWasPressed = true;
+				setVisible(false);
+			}
+		});
+		c.add(okButton);
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		c.add(cancelButton);
 		pack();
 	}
 
@@ -39,7 +55,7 @@ public class SettingsDialog extends JDialog {
 	}
 
 	public int getId() {
-		return (Integer) this.frameField.getValue();
+		return (Integer) this.idField.getValue();
 	}
 
 	public void setFrame(int frame) {
@@ -69,6 +85,11 @@ public class SettingsDialog extends JDialog {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setGroupingUsed(false);
 		return nf;
+	}
+
+	public boolean showDialog() {
+		setVisible(true);
+		return okWasPressed;
 	}
 
 }

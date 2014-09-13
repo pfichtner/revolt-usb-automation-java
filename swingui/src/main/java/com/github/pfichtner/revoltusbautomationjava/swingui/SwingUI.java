@@ -45,10 +45,6 @@ public class SwingUI extends JFrame {
 
 	private JComponent buttonPanel;
 
-	protected int id = 10;
-
-	protected int frame = 6789;
-
 	public SwingUI() {
 		setTitle("SwingUI");
 		setResizable(false);
@@ -136,9 +132,12 @@ public class SwingUI extends JFrame {
 
 			private void openDeviceSettings() {
 				SettingsDialog settings = new SettingsDialog(SwingUI.this);
-				settings.setId(SwingUI.this.id);
-				settings.setFrame(SwingUI.this.frame);
-				settings.setVisible(true);
+				settings.setId(msgGenerator.getRawId());
+				settings.setFrame(msgGenerator.getRawFrames());
+				if (settings.showDialog()) {
+					msgGenerator.rawId(settings.getId());
+					msgGenerator.rawFrames(settings.getFrame());
+				}
 			}
 
 		});

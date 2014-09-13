@@ -1,6 +1,11 @@
 package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import static com.github.pfichtner.revoltusbautomationjava.Preconditions.checkNotNull;
+import static org.usb4java.LibUsb.CAP_HAS_HOTPLUG;
+import static org.usb4java.LibUsb.HOTPLUG_ENUMERATE;
+import static org.usb4java.LibUsb.HOTPLUG_EVENT_DEVICE_ARRIVED;
+import static org.usb4java.LibUsb.HOTPLUG_EVENT_DEVICE_LEFT;
+import static org.usb4java.LibUsb.HOTPLUG_MATCH_ANY;
 import static org.usb4java.LibUsb.SUCCESS;
 
 import java.io.Closeable;
@@ -14,10 +19,20 @@ import org.usb4java.Device;
 import org.usb4java.DeviceDescriptor;
 import org.usb4java.DeviceHandle;
 import org.usb4java.DeviceList;
+import org.usb4java.HotplugCallback;
+import org.usb4java.HotplugCallbackHandle;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
 public class Usb implements Closeable {
+
+	public interface UsbHotPlugEventListener {
+
+		void deviceConnected(short idVendor, short idProduct);
+
+		void deviceDisconnected(short idVendor, short idProduct);
+
+	}
 
 	private int interfaceNum = 0;
 
@@ -29,17 +44,26 @@ public class Usb implements Closeable {
 
 	private final Context context = new Context();
 
-	private Usb() {
+	private short vendorId;
+
+	private short productId;
+
+	public boolean connected;
+
+	private Usb(short vendorId, short productId) {
 		checkRc(LibUsb.init(this.context), "Unable to initialize libusb");
+		this.vendorId = vendorId;
+		this.productId = productId;
 	}
 
-	public static Usb newInstance() {
-		return new Usb();
+	public static Usb newInstance(short vendorId, short productId) {
+		return new Usb(vendorId, productId);
 	}
 
-	public Usb connect(short vendorId, short productId) {
+	public Usb connect() {
 		this.deviceHandle = getDeviceHandle(findDevice(vendorId, productId));
 		claimInterface(this.deviceHandle, this.interfaceNum);
+		connected = true;
 		return this;
 	}
 
@@ -128,6 +152,66 @@ public class Usb implements Closeable {
 		ByteBuffer buffer = BufferUtils.allocateByteBuffer(data.length);
 		buffer.put(data);
 		return buffer;
+	}
+
+	public boolean hasHotplug() {
+		return LibUsb.hasCapability(CAP_HAS_HOTPLUG);
+	}
+
+	private static class EventHandlingThread extends Thread {
+
+		{
+			setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				Usb.checkRc(LibUsb.handleEventsTimeout(null, 1 * 1000 * 1000),
+						"Unable to handle events");
+			}
+		}
+	}
+
+	private class Callback implements HotplugCallback {
+
+		private UsbHotPlugEventListener hotPlugEventListener;
+
+		public Callback(UsbHotPlugEventListener hotPlugEventListener) {
+			this.hotPlugEventListener = hotPlugEventListener;
+		}
+
+		public int processEvent(Context context, Device device, int event,
+				Object userData) {
+			DeviceDescriptor descriptor = new DeviceDescriptor();
+			Usb.checkRc(LibUsb.getDeviceDescriptor(device, descriptor),
+					"Unable to read device descriptor");
+			if (vendorId == descriptor.idVendor()
+					&& productId == descriptor.idProduct()) {
+				if (event == HOTPLUG_EVENT_DEVICE_ARRIVED) {
+					connect();
+					hotPlugEventListener.deviceConnected(descriptor.idVendor(),
+							descriptor.idProduct());
+				} else {
+					hotPlugEventListener.deviceDisconnected(
+							descriptor.idVendor(), descriptor.idProduct());
+					connected = false;
+				}
+			}
+			return 0;
+		}
+
+	}
+
+	public void registerCallback(UsbHotPlugEventListener hotPlugEventListener) {
+		new EventHandlingThread().start();
+		Usb.checkRc(LibUsb.hotplugRegisterCallback(null,
+				HOTPLUG_EVENT_DEVICE_ARRIVED | HOTPLUG_EVENT_DEVICE_LEFT,
+				HOTPLUG_ENUMERATE, HOTPLUG_MATCH_ANY, HOTPLUG_MATCH_ANY,
+				HOTPLUG_MATCH_ANY, new Callback(hotPlugEventListener), null,
+				new HotplugCallbackHandle()),
+				"Unable to register hotplug callback");
+
 	}
 
 }

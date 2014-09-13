@@ -1,5 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.usb;
 
+import static com.github.pfichtner.revoltusbautomationjava.Preconditions.checkNotNull;
 import static org.usb4java.LibUsb.SUCCESS;
 
 import java.io.Closeable;
@@ -24,14 +25,22 @@ public class Usb implements Closeable {
 
 	private long timeout = TimeUnit.SECONDS.toMillis(5);
 
-	private final DeviceHandle deviceHandle;
+	private DeviceHandle deviceHandle;
 
 	private final Context context = new Context();
 
-	public Usb(short vendorId, short productId) {
+	private Usb() {
 		checkRc(LibUsb.init(this.context), "Unable to initialize libusb");
+	}
+
+	public static Usb newInstance() {
+		return new Usb();
+	}
+
+	public Usb connect(short vendorId, short productId) {
 		this.deviceHandle = getDeviceHandle(findDevice(vendorId, productId));
 		claimInterface(this.deviceHandle, this.interfaceNum);
+		return this;
 	}
 
 	public Usb interfaceNum(int interfaceNum) {
@@ -64,8 +73,11 @@ public class Usb implements Closeable {
 	}
 
 	public void close() {
-		release(this.deviceHandle, interfaceNum);
-		LibUsb.close(this.deviceHandle);
+		DeviceHandle dh = this.deviceHandle;
+		if (dh != null) {
+			release(dh, interfaceNum);
+			LibUsb.close(dh);
+		}
 		LibUsb.exit(this.context);
 	}
 
@@ -93,7 +105,7 @@ public class Usb implements Closeable {
 				+ productId + " not found", -1);
 	}
 
-	private static void checkRc(int result, String message) {
+	public static void checkRc(int result, String message) {
 		if (result != SUCCESS) {
 			throw new LibUsbException(message, result);
 		}
@@ -102,8 +114,9 @@ public class Usb implements Closeable {
 	public void write(byte[] data) {
 		ByteBuffer buffer = newByteBuffer(data);
 		IntBuffer transferred = BufferUtils.allocateIntBuffer();
-		checkRc(LibUsb.bulkTransfer(this.deviceHandle, outEndpoint, buffer,
-				transferred, timeout), "Unable to send data");
+		checkRc(LibUsb.bulkTransfer(
+				checkNotNull(this.deviceHandle, "not connected"), outEndpoint,
+				buffer, transferred, timeout), "Unable to send data");
 	}
 
 	private static void release(DeviceHandle deviceHandle, int interfaceNum) {

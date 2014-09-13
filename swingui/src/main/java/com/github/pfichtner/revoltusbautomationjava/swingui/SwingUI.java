@@ -1,5 +1,11 @@
 package com.github.pfichtner.revoltusbautomationjava.swingui;
 
+import static org.usb4java.LibUsb.CAP_HAS_HOTPLUG;
+import static org.usb4java.LibUsb.HOTPLUG_ENUMERATE;
+import static org.usb4java.LibUsb.HOTPLUG_EVENT_DEVICE_ARRIVED;
+import static org.usb4java.LibUsb.HOTPLUG_EVENT_DEVICE_LEFT;
+import static org.usb4java.LibUsb.HOTPLUG_MATCH_ANY;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -17,6 +23,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import org.usb4java.Context;
+import org.usb4java.Device;
+import org.usb4java.DeviceDescriptor;
+import org.usb4java.HotplugCallback;
+import org.usb4java.HotplugCallbackHandle;
+import org.usb4java.LibUsb;
+
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
@@ -24,14 +37,57 @@ import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 // TODO Do not fail on usb errors
-// TODO Listen for added USB devices
 // TODO Add menu bar analog to EXE
 public class SwingUI extends JFrame {
 
+	static class EventHandlingThread extends Thread {
+
+		{
+			setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				Usb.checkRc(LibUsb.handleEventsTimeout(null, 1 * 1000 * 1000),
+						"Unable to handle events");
+			}
+		}
+	}
+
+	private static final short vendorId = (short) 0xffff;
+
+	private static final short productId = (short) 0x1122;
+
+	private class Callback implements HotplugCallback {
+
+		public int processEvent(Context context, Device device, int event,
+				Object userData) {
+			DeviceDescriptor descriptor = new DeviceDescriptor();
+			Usb.checkRc(LibUsb.getDeviceDescriptor(device, descriptor),
+					"Unable to read device descriptor");
+			if (vendorId == descriptor.idVendor()
+					&& productId == descriptor.idProduct()) {
+				if (event == HOTPLUG_EVENT_DEVICE_ARRIVED) {
+					connect();
+				} else {
+					connected = false;
+					status.setText("Disconnetced");
+				}
+			}
+			return 0;
+		}
+
+	}
+
 	private static final long serialVersionUID = -7029240022142504077L;
 
-	private Usb usb = new Usb((short) 0xffff, (short) 0x1122);
+	private Usb usb = Usb.newInstance();
 	private MessageGenerator msgGenerator = new MessageGenerator();
+
+	private JLabel status;
+
+	private boolean connected;
 
 	public SwingUI() {
 		setTitle("SwingUI");
@@ -48,18 +104,42 @@ public class SwingUI extends JFrame {
 		}
 		addRow(c, "All");
 
-		JLabel status = new JLabel("Ready");
+		status = new JLabel("Ready");
 		status.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		getContentPane().add(status, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				usb.close();
+				if (connected) {
+					usb.close();
+				}
 			}
 
 		});
 		pack();
+
+		if (!LibUsb.hasCapability(CAP_HAS_HOTPLUG)) {
+			this.status.setText("System doesn't support hotplug");
+		} else {
+			new EventHandlingThread().start();
+			registerCallback();
+		}
+	}
+
+	private void connect() {
+		usb.connect(vendorId, productId);
+		status.setText("Connected");
+		connected = true;
+	}
+
+	private void registerCallback() {
+		Usb.checkRc(LibUsb.hotplugRegisterCallback(null,
+				HOTPLUG_EVENT_DEVICE_ARRIVED | HOTPLUG_EVENT_DEVICE_LEFT,
+				HOTPLUG_ENUMERATE, HOTPLUG_MATCH_ANY, HOTPLUG_MATCH_ANY,
+				HOTPLUG_MATCH_ANY, new Callback(), null,
+				new HotplugCallbackHandle()),
+				"Unable to register hotplug callback");
 	}
 
 	private void addRow(Container contentPane, String name) {

@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
@@ -54,7 +55,8 @@ public class SwingUI extends JFrame {
 		setLayout(new BorderLayout());
 
 		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(5, 3));
+		buttonPanel.setLayout(new GridLayout(5, 3, 15, 5));
+		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(buttonPanel, BorderLayout.CENTER);
 		for (int i = 0; i < 4; i++) {
 			addRow(buttonPanel, String.valueOf(i + 1));

@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
 public class SettingsDialog extends JDialog {
@@ -26,8 +28,9 @@ public class SettingsDialog extends JDialog {
 		super(owner, true);
 		setResizable(false);
 		setLocationRelativeTo(owner);
-		setLayout(new GridLayout(3, 2));
+		setLayout(new GridLayout(3, 2, 15, 5));
 		Container c = getContentPane();
+		((JComponent) c).setBorder(new EmptyBorder(10, 10, 10, 10));
 		c.add(new JLabel("Frame 3-255"));
 		c.add(frameField);
 		c.add(new JLabel("ID 0-65535"));

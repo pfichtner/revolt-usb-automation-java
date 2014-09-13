@@ -27,7 +27,6 @@ public class SettingsDialog extends JDialog {
 	public SettingsDialog(Frame owner) {
 		super(owner, true);
 		setResizable(false);
-		setLocationRelativeTo(owner);
 		setLayout(new GridLayout(3, 2, 15, 5));
 		Container c = getContentPane();
 		((JComponent) c).setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -51,6 +50,7 @@ public class SettingsDialog extends JDialog {
 		});
 		c.add(cancelButton);
 		pack();
+		setLocationRelativeTo(owner);
 	}
 
 	public void setId(int id) {

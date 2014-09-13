@@ -9,11 +9,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
@@ -25,7 +29,6 @@ import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
 
-// TODO Do not fail on usb errors
 // TODO Add menu bar analog to EXE
 public class SwingUI extends JFrame {
 
@@ -49,6 +52,7 @@ public class SwingUI extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setJMenuBar(createMenuBar());
 		setLayout(new BorderLayout());
 
 		buttonPanel = new JPanel();
@@ -75,6 +79,8 @@ public class SwingUI extends JFrame {
 		});
 		pack();
 
+		installUncaughtExceptionHandler();
+
 		if (usb.hasHotplug()) {
 			usb.registerCallback(new UsbHotPlugEventListener() {
 
@@ -86,19 +92,52 @@ public class SwingUI extends JFrame {
 					disconneted();
 				}
 
+				public void errorConnecting(short idVendor, short idProduct,
+						Exception e) {
+					status.setText(e.getMessage());
+				}
+
 			});
 		} else {
 			this.status.setText("System doesn't support hotplug");
 		}
 	}
 
+	private void installUncaughtExceptionHandler() {
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				try {
+					e.printStackTrace();
+					status.setText(e.getMessage());
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+
+			}
+		});
+	}
+
+	private JMenuBar createMenuBar() {
+		JMenuBar menu = new JMenuBar();
+		JMenu file = new JMenu("System");
+		JMenuItem exitMi = new JMenuItem("Exit");
+		exitMi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		file.add(exitMi);
+		menu.add(file);
+		return menu;
+	}
+
 	private void connected() {
-		status.setText("Connected");
+		status.setText("Device is connected");
 		setState(true);
 	}
 
 	private void disconneted() {
-		status.setText("Disonnected");
+		status.setText("Device is not connected");
 		setState(false);
 	}
 

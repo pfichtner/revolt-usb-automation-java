@@ -32,6 +32,8 @@ public class Usb implements Closeable {
 
 		void deviceDisconnected(short idVendor, short idProduct);
 
+		void errorConnecting(short idVendor, short idProduct, Exception e);
+
 	}
 
 	private int interfaceNum = 0;
@@ -189,9 +191,15 @@ public class Usb implements Closeable {
 			if (vendorId == descriptor.idVendor()
 					&& productId == descriptor.idProduct()) {
 				if (event == HOTPLUG_EVENT_DEVICE_ARRIVED) {
-					connect();
-					hotPlugEventListener.deviceConnected(descriptor.idVendor(),
-							descriptor.idProduct());
+					try {
+						connect();
+						hotPlugEventListener.deviceConnected(
+								descriptor.idVendor(), descriptor.idProduct());
+					} catch (Exception e) {
+						hotPlugEventListener.errorConnecting(
+								descriptor.idVendor(), descriptor.idProduct(),
+								e);
+					}
 				} else {
 					hotPlugEventListener.deviceDisconnected(
 							descriptor.idVendor(), descriptor.idProduct());

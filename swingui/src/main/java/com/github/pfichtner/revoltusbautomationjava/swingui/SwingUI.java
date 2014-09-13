@@ -1,5 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.swingui;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -9,8 +10,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
@@ -19,7 +22,6 @@ import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
-// TODO Add action bar
 // TODO Do not fail on usb errors
 // TODO Listen for added USB devices
 // TODO Add menu bar analog to EXE
@@ -35,12 +37,19 @@ public class SwingUI extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new GridLayout(5, 3));
-		Container contentPane = getContentPane();
+		setLayout(new BorderLayout());
+
+		JComponent c = new JPanel();
+		c.setLayout(new GridLayout(5, 3));
+		getContentPane().add(c, BorderLayout.CENTER);
 		for (int i = 0; i < 4; i++) {
-			addRow(contentPane, String.valueOf(i + 1));
+			addRow(c, String.valueOf(i + 1));
 		}
-		addRow(contentPane, "All");
+		addRow(c, "All");
+
+		JLabel status = new JLabel(" ");
+		getContentPane().add(status, BorderLayout.SOUTH);
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

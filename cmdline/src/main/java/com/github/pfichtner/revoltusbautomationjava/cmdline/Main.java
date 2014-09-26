@@ -1,4 +1,4 @@
-package com.github.pfichtner.revoltusbautomationjava;
+package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;

@@ -1,5 +1,13 @@
 #!/bin/sh
 
+#################################################################################################
+# Shell script to control the outlets via cmdline tool                                          #
+# Command line tools can be found e.g. on https://github.com/kralo/revolt-usb-automation-python # 
+# or https://github.com/pfichtner/revolt-usb-automation-java/                                   #
+#                                                                                               #
+# If you want to name your outlets put a file name outlets.txt into the same directory          #
+#################################################################################################
+
 # Convert POST to GET
 if [ "$REQUEST_METHOD" = POST ]
 then

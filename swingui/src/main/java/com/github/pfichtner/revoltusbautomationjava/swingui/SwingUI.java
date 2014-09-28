@@ -105,7 +105,12 @@ public class SwingUI extends JFrame {
 			});
 		} else {
 			this.status.setText("System doesn't support hotplug");
-			// TODO call connect!?
+			try {
+				usb.connect();
+				connected();
+			} catch (Exception e) {
+				this.status.setText(e.getMessage());
+			}
 		}
 	}
 

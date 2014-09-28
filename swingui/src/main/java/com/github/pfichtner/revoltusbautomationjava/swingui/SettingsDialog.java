@@ -17,10 +17,19 @@ import javax.swing.text.NumberFormatter;
 
 public class SettingsDialog extends JDialog {
 
+	private static final int FRAME_MIN = 3;
+
+	private static final int FRAME_MAX = 255;
+
+	private static final int ID_MIN = 0;
+
+	private static final int ID_MAX = 65535;
+
 	private static final long serialVersionUID = 6344039963255252742L;
 
-	private JFormattedTextField frameField = createNumericField(3, 255);
-	private JFormattedTextField idField = createNumericField(0, 65535);
+	private JFormattedTextField frameField = createNumericField(FRAME_MIN,
+			FRAME_MAX);
+	private JFormattedTextField idField = createNumericField(ID_MIN, ID_MAX);
 
 	private boolean okWasPressed;
 
@@ -30,9 +39,9 @@ public class SettingsDialog extends JDialog {
 		setLayout(new GridLayout(3, 2, 15, 5));
 		Container c = getContentPane();
 		((JComponent) c).setBorder(new EmptyBorder(10, 10, 10, 10));
-		c.add(new JLabel("Frame 3-255"));
+		c.add(new JLabel("Frame " + FRAME_MIN + "-" + FRAME_MAX + ""));
 		c.add(frameField);
-		c.add(new JLabel("ID 0-65535"));
+		c.add(new JLabel("ID " + ID_MIN + "-" + ID_MAX));
 		c.add(idField);
 		JButton okButton = new JButton("Ok");
 		okButton.addActionListener(new ActionListener() {

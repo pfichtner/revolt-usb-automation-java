@@ -169,7 +169,8 @@ public class Usb implements Closeable {
 		@Override
 		public void run() {
 			while (true) {
-				Usb.checkRc(LibUsb.handleEventsTimeout(null, 1 * 1000 * 1000),
+				checkRc(LibUsb.handleEventsTimeout(null,
+						TimeUnit.SECONDS.toMicros(1)),
 						"Unable to handle events");
 			}
 		}
@@ -186,7 +187,7 @@ public class Usb implements Closeable {
 		public int processEvent(Context context, Device device, int event,
 				Object userData) {
 			DeviceDescriptor descriptor = new DeviceDescriptor();
-			Usb.checkRc(LibUsb.getDeviceDescriptor(device, descriptor),
+			checkRc(LibUsb.getDeviceDescriptor(device, descriptor),
 					"Unable to read device descriptor");
 			if (vendorId == descriptor.idVendor()
 					&& productId == descriptor.idProduct()) {
@@ -213,7 +214,7 @@ public class Usb implements Closeable {
 
 	public void registerCallback(UsbHotPlugEventListener hotPlugEventListener) {
 		new EventHandlingThread().start();
-		Usb.checkRc(LibUsb.hotplugRegisterCallback(null,
+		checkRc(LibUsb.hotplugRegisterCallback(null,
 				HOTPLUG_EVENT_DEVICE_ARRIVED | HOTPLUG_EVENT_DEVICE_LEFT,
 				HOTPLUG_ENUMERATE, HOTPLUG_MATCH_ANY, HOTPLUG_MATCH_ANY,
 				HOTPLUG_MATCH_ANY, new Callback(hotPlugEventListener), null,

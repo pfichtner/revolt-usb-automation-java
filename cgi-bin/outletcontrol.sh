@@ -67,8 +67,9 @@ done
 echo "</table>"
 
 if [ -n "$outlet" ]; then
-	base="/tmp/revolt"
-	/usr/bin/java -cp $base/com/github/pfichtner/revoltusbautomationjava/library/0.0.1-SNAPSHOT/library-0.0.1-SNAPSHOT.jar:$base/org/usb4java/usb4java/1.2.0/usb4java-1.2.0.jar:$base/org/usb4java/libusb4java/1.2.0/libusb4java-1.2.0-linux-x86_64.jar:$base/org/usb4java/libusb4java/1.2.0/libusb4java-1.2.0-linux-arm.jar:$base/org/apache/commons/commons-lang3/3.2.1/commons-lang3-3.2.1.jar:$base/args4j/args4j/2.0.26/args4j-2.0.26.jar com.github.pfichtner.revoltusbautomationjava.Main -outlet "$outlet" -state "$state"
+	base="/path/where/you/placed/the/jar"
+        /usr/bin/java -cp $base/cmdline-0.0.1-shaded.jar com.github.pfichtner.revoltusbautomationjava.cmdline.Main -outlet "$outlet" -state "$state"
+
 fi
 
 echo "</form>"

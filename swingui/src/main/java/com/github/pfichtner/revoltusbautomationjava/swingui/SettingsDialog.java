@@ -39,9 +39,9 @@ public class SettingsDialog extends JDialog {
 		setLayout(new GridLayout(3, 2, 15, 5));
 		Container c = getContentPane();
 		((JComponent) c).setBorder(new EmptyBorder(10, 10, 10, 10));
-		c.add(new JLabel("Frame " + FRAME_MIN + "-" + FRAME_MAX + ""));
+		c.add(new JLabel(String.format("Frame %s-%s", FRAME_MIN, FRAME_MAX)));
 		c.add(frameField);
-		c.add(new JLabel("ID " + ID_MIN + "-" + ID_MAX));
+		c.add(new JLabel(String.format("ID %s-%s", ID_MIN, ID_MAX)));
 		c.add(idField);
 		JButton okButton = new JButton("Ok");
 		okButton.addActionListener(new ActionListener() {

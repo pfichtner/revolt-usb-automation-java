@@ -57,7 +57,7 @@ configfile=`dirname $0`/outlets.txt
 for nr in 1 2 3 4 ALL; do
 	name=$nr
 	[ -r $configfile ] && name=`grep -i "outlet.$nr" $configfile  | cut -f2 -d'='`
-	[ $name -z ] && name=$nr
+	[ -z "$name" ] && name=$nr
 	echo "<tr>"
 	echo "<td><input id=\"submit\" name=\"outlet$nr\" value="ON" type=\"submit\"></td>"
 	echo "<td><center><b>$name</b></center></td>"

@@ -15,4 +15,4 @@ This repository hosts three separate items:
 * A command line tool to switch the power outlets
 * A Java/SwingUI application that runs all plattforms http://usb4java.org/ runs (currently Linux x86 32/64 bit/ARM 32 bit; OS X x86 32/64 bit;Windows x86 32/64 bit) very similar to the distributed proprietary Windows EXE
 ![SwingUI Screenshot](https://pfichtner.github.io/revolt-usb-automation-java/screenshots/swingui.png)
-* A sh based cgi-bin that shows on/off buttons where you can refer your favourite script/bianry to switch outlets
+* A sh based cgi-bin that shows on/off buttons where you can refer your favourite script/binary to switch outlets

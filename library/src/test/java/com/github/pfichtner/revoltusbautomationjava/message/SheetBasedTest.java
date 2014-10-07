@@ -43,9 +43,10 @@ public class SheetBasedTest {
 		String msgId = Padder.leftPadder('0', 4).pad(intToHex(rawId));
 		int rawFrame = parseInt(this.row.get(col("E"))); // resends
 
-		Function function = Function.of(
-				Outlet.of(Integer.parseInt(this.row.get(col("B")))),
-				State.forString(this.row.get(col("C"))));
+		String bVal = this.row.get(col("B"));
+		Function function = Function.of("ALL".equals(bVal) ? Outlet.all()
+				: new Outlet[] { Outlet.of(Integer.parseInt(bVal)) }, State
+				.forString(this.row.get(col("C"))));
 
 		MessageGenerator generator = new MessageGenerator().rawFrames(rawFrame)
 				.rawId(rawId).msgFin(this.row.get(col("Z")));

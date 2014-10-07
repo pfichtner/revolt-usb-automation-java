@@ -65,10 +65,10 @@ public class SwingUI extends JFrame {
 
 		addHeader(buttonPanel);
 
-		for (int i = 0; i < 4; i++) {
-			addRow(buttonPanel, String.valueOf(i + 1));
+		for (int i = 1; i <= 4; i++) {
+			addRow(buttonPanel, String.valueOf(i), Outlet.of(i));
 		}
-		addRow(buttonPanel, "All");
+		addRow(buttonPanel, "All", Outlet.all());
 
 		status = new JLabel();
 		status.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -192,24 +192,23 @@ public class SwingUI extends JFrame {
 		}
 	}
 
-	private void addRow(Container c, String name) {
+	private void addRow(Container c, String text, Outlet... outlets) {
 		JButton onButton = new SquareButton();
-		onButton.addActionListener(newaddActionListener(name, State.ON));
+		onButton.addActionListener(newaddActionListener(outlets, State.ON));
 		c.add(onButton);
-		JLabel label = new JLabel(name);
+		JLabel label = new JLabel(text);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		c.add(label);
 		JButton offButton = new SquareButton();
-		offButton.addActionListener(newaddActionListener(name, State.OFF));
+		offButton.addActionListener(newaddActionListener(outlets, State.OFF));
 		c.add(offButton);
 	}
 
-	private ActionListener newaddActionListener(final String name,
+	private ActionListener newaddActionListener(final Outlet[] outlets,
 			final State state) {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				usb.write(msgGenerator.bytesMessage(Function.of(
-						Outlet.forString(name), state)));
+				usb.write(msgGenerator.bytesMessage(Function.of(outlets, state)));
 			}
 		};
 	}

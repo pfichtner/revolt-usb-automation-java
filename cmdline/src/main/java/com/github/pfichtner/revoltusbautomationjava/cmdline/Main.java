@@ -26,11 +26,12 @@ public class Main {
 	@Option(name = "-productId")
 	private short productId = 0x1122;
 
-	private Outlet[] outlet;
+	private Outlet[] outlets;
 
 	@Option(name = "-outlet", metaVar = "1-4 or ALL", required = true)
 	public void setOutlet(String outlet) {
-		this.outlet = Outlet.forString(Trimmer.on('0').trim(outlet));
+		this.outlets = "all".equalsIgnoreCase(outlet) ? Outlet.all()
+				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0').trim(outlet))) };
 	}
 
 	@Option(name = "-state", required = true)
@@ -86,7 +87,7 @@ public class Main {
 		Usb usb = newUsb();
 		try {
 			usb.write(newMessageGenerator().bytesMessage(
-					Function.of(this.outlet, this.state)));
+					Function.of(this.outlets, this.state)));
 		} finally {
 			usb.close();
 		}

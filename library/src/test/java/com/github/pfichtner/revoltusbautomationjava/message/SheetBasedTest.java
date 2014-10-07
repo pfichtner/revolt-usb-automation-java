@@ -44,7 +44,7 @@ public class SheetBasedTest {
 		int rawFrame = parseInt(this.row.get(col("E"))); // resends
 
 		Function function = Function.of(
-				Outlet.forString(this.row.get(col("B"))),
+				Outlet.of(Integer.parseInt(this.row.get(col("B")))),
 				State.forString(this.row.get(col("C"))));
 
 		MessageGenerator generator = new MessageGenerator().rawFrames(rawFrame)

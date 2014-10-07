@@ -12,9 +12,16 @@ public enum Outlet {
 		this.index = index;
 	}
 
-	public static Outlet forInt(int index) {
-		Outlet[] values = values();
-		for (Outlet outlet : values) {
+	public static Outlet[] all() {
+		return values();
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public static Outlet of(int index) {
+		for (Outlet outlet : values()) {
 			if (outlet.index == index) {
 				return outlet;
 			}
@@ -22,17 +29,8 @@ public enum Outlet {
 		throw new IllegalStateException(index + " is not a valid outlet index");
 	}
 
-	public int getIndex() {
-		return index;
-	}
-
-	public static Outlet[] forString(String index) {
-		return "ALL".equalsIgnoreCase(index) ? values()
-				: new Outlet[] { forInt(Integer.parseInt(index)) };
-	}
-
-	public static boolean isAll(Outlet[] o) {
-		return Arrays.equals(o, values());
+	public static boolean isAll(Outlet[] outlets) {
+		return Arrays.equals(outlets, values());
 	}
 
 }

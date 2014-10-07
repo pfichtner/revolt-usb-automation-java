@@ -7,9 +7,6 @@ import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.in
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.shiftLeft;
 import static com.github.pfichtner.revoltusbautomationjava.message.Sheets.col;
 import static com.github.pfichtner.revoltusbautomationjava.message.Sheets.columnHeaders;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padRight;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;
 import static java.lang.Integer.parseInt;
 import static org.junit.Assert.assertEquals;
 
@@ -43,7 +40,7 @@ public class SheetBasedTest {
 	@Test
 	public void testRow() {
 		int rawId = parseInt(this.row.get(col("F")));
-		String msgId = padLeft(intToHex(rawId), '0', 4);
+		String msgId = Padder.leftPadder('0', 4).pad(intToHex(rawId));
 		int rawFrame = parseInt(this.row.get(col("E"))); // resends
 
 		Function function = Function.of(
@@ -55,18 +52,16 @@ public class SheetBasedTest {
 
 		Map<ColumnHeader, String> actual = new HashMap<ColumnHeader, String>();
 
-		actual.put(col("K"), padRight(function.asHex(), '0', 2));
+		actual.put(col("K"), Padder.rightPadder('0', 2).pad(function.asHex()));
 		actual.put(
 				col("L"),
-				padLeft(intToBin(shiftLeft(binToInt(function.asByte()), 4)),
-						'0', 8));
+				Padder.leftPadder('0', 8).pad(intToBin(shiftLeft(binToInt(function.asByte()), 4))));
 		actual.put(col("M"), function.asByte());
 		actual.put(col("N"), String.valueOf(function.asInt()));
 		actual.put(col("O"), String.valueOf(generator.getSum(function)));
 		actual.put(col("P"), generator.getChecksum(function));
 		actual.put(col("Q"), generator.getChecksum(function));
-		String checkSum = padLeft(
-				intToBin(hex2Int(generator.getChecksum(function))), '0', 8);
+		String checkSum = Padder.leftPadder('0', 8).pad(intToBin(hex2Int(generator.getChecksum(function))));
 		actual.put(col("R"), checkSum);
 		String checksumByte1 = checkSum.substring(0, 4);
 		String checksumByte2 = checkSum.substring(4);
@@ -75,15 +70,15 @@ public class SheetBasedTest {
 		actual.put(col("U"), String.valueOf(binToInt(checksumByte1)));
 		actual.put(col("V"), String.valueOf(binToInt(checksumByte2)));
 		actual.put(col("W"), String.valueOf(generator.getRawChecksum(function)));
-		actual.put(col("Y"), padLeft(intToHex(rawFrame), '0', 2));
+		actual.put(col("Y"), Padder.leftPadder('0', 2).pad(intToHex(rawFrame)));
 		assertRowEquals(row, actual);
 
 		assertEquals(
 				row.get(col("AA")).toLowerCase(),
-				msgId + padRight(intToHex(function.asInt()), '0', 2)
+				msgId + Padder.rightPadder('0', 2).pad(intToHex(function.asInt()))
 						+ generator.getChecksum(function).toLowerCase()
 						+ this.row.get(col("X"))
-						+ padLeft(intToHex(rawFrame), '0', 2)
+						+ Padder.leftPadder('0', 2).pad(intToHex(rawFrame))
 						+ this.row.get(col("Z")).toLowerCase());
 		assertEquals(this.row.get(col("H")).toLowerCase(), generator
 				.hexMessage(function).toLowerCase());
@@ -93,8 +88,8 @@ public class SheetBasedTest {
 			Map<ColumnHeader, String> actual) {
 		for (Entry<ColumnHeader, String> entry : actual.entrySet()) {
 			assertEquals("Key " + entry.getKey(),
-					trim(expected.get(entry.getKey()).toLowerCase(), '0'),
-					trim(entry.getValue().toLowerCase(), '0'));
+					Trimmer.on('0').trim(expected.get(entry.getKey()).toLowerCase()),
+					Trimmer.on('0').trim(entry.getValue().toLowerCase()));
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
+import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
 import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;
 
@@ -12,7 +13,9 @@ import org.kohsuke.args4j.Option;
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
+import com.github.pfichtner.revoltusbautomationjava.message.Padder;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
+import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class Main {
@@ -27,7 +30,7 @@ public class Main {
 
 	@Option(name = "-outlet", metaVar = "1-4 or ALL", required = true)
 	public void setOutlet(String outlet) {
-		this.outlet = Outlet.forString(trim(outlet, '0'));
+		this.outlet = Outlet.forString(Trimmer.on('0').trim(outlet));
 	}
 
 	@Option(name = "-state", required = true)
@@ -51,7 +54,7 @@ public class Main {
 	@Option(name = "-msgFin")
 	public void setMsgFin(String msgFin) {
 		int length = msgFin.length();
-		this.msgFin = padLeft(msgFin, '0', length).substring(0, length);
+		this.msgFin = leftPadder('0', length).pad(msgFin).substring(0, length);
 	}
 
 	// ------------------------------------------------------------------------

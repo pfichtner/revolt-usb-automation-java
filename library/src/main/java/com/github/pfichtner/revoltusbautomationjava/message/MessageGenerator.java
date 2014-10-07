@@ -1,10 +1,10 @@
 package com.github.pfichtner.revoltusbautomationjava.message;
 
+import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
+import static com.github.pfichtner.revoltusbautomationjava.message.Padder.rightPadder;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hexToBytes;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padRight;
 import static java.lang.Math.ceil;
 
 public class MessageGenerator {
@@ -32,7 +32,7 @@ public class MessageGenerator {
 	}
 
 	private static String rawIdToString(int rawId) {
-		return padLeft(intToHex(rawId), '0', 4);
+		return leftPadder('0', 4).pad(intToHex(rawId));
 	}
 
 	public MessageGenerator msgFin(String msgFin) {
@@ -42,8 +42,8 @@ public class MessageGenerator {
 
 	public String hexMessage(Function function) {
 		String msgPaddingBytes = "20"; // not relevant padding
-		String msgAction = padRight(intToHex(function.asInt()), '0', 2);
-		String msgFrame = padLeft(intToHex(this.rawFrames), '0', 2);
+		String msgAction = rightPadder('0', 2).pad(intToHex(function.asInt()));
+		String msgFrame = leftPadder('0', 2).pad(intToHex(this.rawFrames));
 		return this.rawId + msgAction + getChecksum(function) + msgPaddingBytes
 				+ msgFrame + this.msgFin;
 	}
@@ -53,7 +53,7 @@ public class MessageGenerator {
 	}
 
 	public String getChecksum(Function function) {
-		return padLeft(intToHex(getRawChecksum(function)), '0', 2);
+		return leftPadder('0', 2).pad(intToHex(getRawChecksum(function)));
 	}
 
 	public int getRawChecksum(Function function) {

@@ -4,6 +4,11 @@ import java.awt.Dimension;
 
 import javax.swing.JButton;
 
+/**
+ * A JButton that is as high as width and vice versa.
+ * 
+ * @author Peter Fichtner
+ */
 public class SquareButton extends JButton {
 
 	private static final long serialVersionUID = 1339527454325437908L;

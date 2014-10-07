@@ -29,6 +29,11 @@ import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
 
+/**
+ * SwingUI of project com.github.pfichtner.revoltusbautomationjava.swingui.
+ * 
+ * @author Peter Fichtner
+ */
 public class SwingUI extends JFrame {
 
 	private static final short vendorId = (short) 0xffff;
@@ -212,8 +217,7 @@ public class SwingUI extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				SwingUI swingUI = new SwingUI();
-				swingUI.setVisible(true);
+				new SwingUI().setVisible(true);
 			}
 		});
 	}

@@ -6,6 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+/**
+ * An UncaughtExceptionHandler that sets the text of caught Exceptions on the
+ * passed JLabel.
+ * 
+ * @author Peter Fichtner
+ */
 public class JLabelExceptionHandler implements UncaughtExceptionHandler {
 
 	private final JLabel status;
@@ -16,12 +22,13 @@ public class JLabelExceptionHandler implements UncaughtExceptionHandler {
 
 	public void uncaughtException(Thread t, final Throwable e) {
 		if (SwingUtilities.isEventDispatchThread()) {
-			status.setText(e.getMessage());
+			this.status.setText(e.getMessage());
 		} else {
 			try {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					public void run() {
-						status.setText(e.getMessage());
+						JLabelExceptionHandler.this.status.setText(e
+								.getMessage());
 					}
 				});
 			} catch (InterruptedException ie) {

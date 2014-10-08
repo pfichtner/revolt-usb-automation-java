@@ -1,8 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
 import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.padLeft;
-import static com.github.pfichtner.revoltusbautomationjava.message.Strings.trim;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +11,6 @@ import org.kohsuke.args4j.Option;
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
-import com.github.pfichtner.revoltusbautomationjava.message.Padder;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
@@ -30,7 +27,7 @@ public class Main {
 
 	@Option(name = "-outlet", metaVar = "1-4 or ALL", required = true)
 	public void setOutlet(String outlet) {
-		this.outlets = "all".equalsIgnoreCase(outlet) ? Outlet.all()
+		this.outlets = "ALL".equalsIgnoreCase(outlet) ? Outlet.all()
 				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0').trim(outlet))) };
 	}
 

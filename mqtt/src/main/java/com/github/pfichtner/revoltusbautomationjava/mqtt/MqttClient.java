@@ -101,14 +101,6 @@ public class MqttClient {
 			}
 		}
 
-		private Integer tryParse(String string) {
-			try {
-				return Integer.valueOf(string);
-			} catch (NumberFormatException e) {
-				return null;
-			}
-		}
-
 		public void deliveryComplete(IMqttDeliveryToken token) {
 			// nothing to do
 		}
@@ -170,6 +162,14 @@ public class MqttClient {
 			usb.close();
 		}
 
+	}
+
+	private static Integer tryParse(String string) {
+		try {
+			return Integer.valueOf(string);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	private void wait4ever() throws InterruptedException {

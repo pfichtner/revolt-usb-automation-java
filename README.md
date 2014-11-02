@@ -11,8 +11,10 @@ All the work was done by https://github.com/kralo and Ralph Babel, http://babel.
 
 So blame me for the bugs in the java implementation and thank those guys above for examing the protocol!
 
-This repository hosts three separate items: 
+This repository hosts four separate items: 
 * A command line tool to switch the power outlets
+* A [MQTT](https://en.wikipedia.org/wiki/MQTT "MQTT") client, e.g. for integrating into [openHAB](http://www.openhab.org/ "openHAB")
+Example entry into items: ```Switch MyItem "MyItem" (GF_Living, Lights) {mqtt=">[brokerNameDefinedInOpenhabCfg:/home/automation/px1675:command:ON:1=ON], >[brokerNameDefinedInOpenhabCfg:/home/automation/px1675:command:OFF:1=OFF]"}```
 * A Java/SwingUI application that runs all plattforms http://usb4java.org/ runs (currently Linux x86 32/64 bit/ARM 32 bit; OS X x86 32/64 bit;Windows x86 32/64 bit) very similar to the distributed proprietary Windows EXE
 ![SwingUI Screenshot](https://pfichtner.github.io/revolt-usb-automation-java/screenshots/swingui.png)
 * A sh based cgi-bin that shows on/off buttons where you can refer your favourite script/binary to switch outlets

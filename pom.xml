@@ -37,6 +37,7 @@
 	<modules>
 		<module>library</module>
 		<module>cmdline</module>
+		<module>mqtt</module>
 		<module>swingui</module>
 	</modules>
 

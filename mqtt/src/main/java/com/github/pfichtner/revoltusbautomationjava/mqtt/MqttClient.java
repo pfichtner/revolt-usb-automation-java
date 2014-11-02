@@ -87,22 +87,17 @@ public class MqttClient {
 		}
 
 		public void messageArrived(String topic, MqttMessage message) {
-			String m = new String(message.getPayload());
-			String[] split = m.split("\\=");
+			String payload = new String(message.getPayload());
+			String[] split = payload.split("\\=");
 			if (split.length == 2) {
-				if ("ALL".equalsIgnoreCase(split[0])
-						|| tryParse(split[0]) != null) {
-					if ("on".equalsIgnoreCase(split[1])
-							|| "off".equalsIgnoreCase(split[1])) {
-						Outlet[] outlets = "ALL".equalsIgnoreCase(split[0]) ? Outlet
-								.all() : new Outlet[] { Outlet.of(Integer
-								.parseInt(Trimmer.on('0').trim(split[0]))) };
-						this.usb.write(this.messageGenerator
-								.bytesMessage(Function.of(outlets,
-										State.forString(split[1]))));
-					}
+				Integer outlet = tryParse(Trimmer.on('0').trim(split[0]));
+				boolean isAll = "ALL".equalsIgnoreCase(split[0]);
+				if (outlet != null || isAll) {
+					Outlet[] outlets = isAll ? Outlet.all()
+							: new Outlet[] { Outlet.of(outlet.intValue()) };
+					this.usb.write(this.messageGenerator.bytesMessage(Function
+							.of(outlets, State.forString(split[1]))));
 				}
-
 			}
 		}
 

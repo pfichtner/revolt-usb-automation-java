@@ -172,7 +172,7 @@ public class MqttClient {
 		}
 	}
 
-	private void wait4ever() throws InterruptedException {
+	private static void wait4ever() throws InterruptedException {
 		Object blocker = new Object();
 		synchronized (blocker) {
 			blocker.wait();

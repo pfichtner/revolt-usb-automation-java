@@ -110,10 +110,8 @@ public class Usb implements Closeable {
 	private Device findDevice(short vendorId, short productId) {
 		DeviceList deviceList = new DeviceList();
 		try {
-			int result = LibUsb.getDeviceList(null, deviceList);
-			if (result < 0) {
-				throw new LibUsbException("Unable to get device list", result);
-			}
+			checkRc(LibUsb.getDeviceList(null, deviceList),
+					"Unable to get device list");
 			for (Device device : deviceList) {
 				DeviceDescriptor descriptor = new DeviceDescriptor();
 				checkRc(LibUsb.getDeviceDescriptor(device, descriptor),

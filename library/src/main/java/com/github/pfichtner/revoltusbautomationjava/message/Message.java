@@ -12,7 +12,7 @@ public class Message {
 	public static class MessageBuilder {
 
 		private int rawFrames = 10;
-		private String rawId = rawIdToString(6789);
+		private String rawId = "6789";
 		private String msgFin = "0000";
 
 		public MessageBuilder rawFrames(int rawFrames) {
@@ -33,12 +33,12 @@ public class Message {
 			return hex2Int(this.rawId);
 		}
 
-		private static String rawIdToString(int rawId) {
-			return leftPadder('0', 4).pad(intToHex(rawId));
+		private String rawIdToString(int rawId) {
+			return leftPadder('0', this.rawId.length()).pad(intToHex(rawId));
 		}
 
 		public MessageBuilder msgFin(String msgFin) {
-			this.msgFin = msgFin;
+			this.msgFin = leftPadder('0', this.msgFin.length()).pad(msgFin);
 			return this;
 		}
 

@@ -1,7 +1,5 @@
 package com.github.pfichtner.revoltusbautomationjava.mqtt;
 
-import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
-
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -53,13 +51,8 @@ public class MqttClient {
 	@Option(name = "-rawId")
 	private Integer rawId;
 
-	private String msgFin;
-
 	@Option(name = "-msgFin")
-	public void setMsgFin(String msgFin) {
-		int length = msgFin.length();
-		this.msgFin = leftPadder('0', length).pad(msgFin).substring(0, length);
-	}
+	private String msgFin;
 
 	// ------------------------------------------------------------------------
 

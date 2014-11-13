@@ -1,7 +1,5 @@
 package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
-import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
-
 import java.util.concurrent.TimeUnit;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -48,17 +46,8 @@ public class Main {
 	@Option(name = "-rawId")
 	private Integer rawId;
 
-	private String msgFin;
-
 	@Option(name = "-msgFin")
-	public void setMsgFin(String msgFin) {
-		this.msgFin = makeAsLongAsCurrent(msgFin);
-	}
-
-	private String makeAsLongAsCurrent(String msgFin) {
-		int length = msgFin.length();
-		return leftPadder('0', length).pad(msgFin).substring(0, length);
-	}
+	private String msgFin;
 
 	// ------------------------------------------------------------------------
 

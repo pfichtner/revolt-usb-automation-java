@@ -9,7 +9,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
-import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
+import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
@@ -88,7 +88,7 @@ public class Main {
 		}
 		Usb usb = newUsb();
 		try {
-			usb.write(newMessageGenerator().message(
+			usb.write(newMessageGenerator().build(
 					Function.of(this.outlets, this.state)).asBytes());
 		} finally {
 			usb.close();
@@ -106,8 +106,8 @@ public class Main {
 		return usb;
 	}
 
-	private MessageGenerator newMessageGenerator() {
-		MessageGenerator generator = new MessageGenerator();
+	private MessageBuilder newMessageGenerator() {
+		MessageBuilder generator = new MessageBuilder();
 		generator = this.rawId == null ? generator : generator
 				.rawId(this.rawId);
 		generator = this.rawFrames == null ? generator : generator

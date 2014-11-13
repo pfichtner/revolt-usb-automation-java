@@ -14,7 +14,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
-import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
+import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
@@ -75,9 +75,9 @@ public class MqttClient {
 	public static class Callback implements MqttCallback {
 
 		private final Usb usb;
-		private final MessageGenerator messageGenerator;
+		private final MessageBuilder messageGenerator;
 
-		public Callback(Usb usb, MessageGenerator messageGenerator) {
+		public Callback(Usb usb, MessageBuilder messageGenerator) {
 			this.usb = usb;
 			this.messageGenerator = messageGenerator;
 		}
@@ -95,7 +95,7 @@ public class MqttClient {
 				if (outlet != null || isAll) {
 					Outlet[] outlets = isAll ? Outlet.all()
 							: new Outlet[] { Outlet.of(outlet.intValue()) };
-					this.usb.write(this.messageGenerator.message(
+					this.usb.write(this.messageGenerator.build(
 							Function.of(outlets, State.forString(split[1])))
 							.asBytes());
 				}
@@ -124,8 +124,8 @@ public class MqttClient {
 		return usb;
 	}
 
-	private MessageGenerator newMessageGenerator() {
-		MessageGenerator generator = new MessageGenerator();
+	private MessageBuilder newMessageGenerator() {
+		MessageBuilder generator = new MessageBuilder();
 		generator = this.rawId == null ? generator : generator
 				.rawId(this.rawId);
 		generator = this.rawFrames == null ? generator : generator
@@ -147,7 +147,7 @@ public class MqttClient {
 		}
 
 		Usb usb = newUsb();
-		MessageGenerator messageGenerator = newMessageGenerator();
+		MessageBuilder messageGenerator = newMessageGenerator();
 		try {
 			org.eclipse.paho.client.mqttv3.MqttClient client = connect(
 					this.brokerHost, this.brokerPort, this.clientId);

@@ -23,7 +23,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import com.github.pfichtner.revoltusbautomationjava.message.Function;
-import com.github.pfichtner.revoltusbautomationjava.message.MessageGenerator;
+import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
@@ -43,7 +43,8 @@ public class SwingUI extends JFrame {
 	private static final long serialVersionUID = -7029240022142504077L;
 
 	private final Usb usb = Usb.newInstance(vendorId, productId);
-	private final MessageGenerator msgGenerator = new MessageGenerator();
+
+	private MessageBuilder msgBuilder = new MessageBuilder();
 
 	private JLabel status;
 
@@ -161,11 +162,11 @@ public class SwingUI extends JFrame {
 
 			private void openDeviceSettings() {
 				SettingsDialog settings = new SettingsDialog(SwingUI.this);
-				settings.setId(msgGenerator.getRawId());
-				settings.setFrame(msgGenerator.getRawFrames());
+				settings.setId(msgBuilder.getRawId());
+				settings.setFrame(msgBuilder.getRawFrames());
 				if (settings.showDialog()) {
-					msgGenerator.rawId(settings.getId());
-					msgGenerator.rawFrames(settings.getFrame());
+					msgBuilder = msgBuilder.rawId(settings.getId());
+					msgBuilder = msgBuilder.rawFrames(settings.getFrame());
 				}
 			}
 
@@ -208,7 +209,7 @@ public class SwingUI extends JFrame {
 			final State state) {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				usb.write(msgGenerator.message(Function.of(outlets, state))
+				usb.write(msgBuilder.build(Function.of(outlets, state))
 						.asBytes());
 			}
 		};

@@ -28,6 +28,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
+
 @RunWith(Parameterized.class)
 public class SheetBasedTest {
 
@@ -48,7 +50,7 @@ public class SheetBasedTest {
 				: new Outlet[] { Outlet.of(Integer.parseInt(bVal)) }, State
 				.forString(this.row.get(col("C"))));
 
-		MessageGenerator generator = new MessageGenerator().rawFrames(rawFrame)
+		MessageBuilder generator = new MessageBuilder().rawFrames(rawFrame)
 				.rawId(rawId).msgFin(this.row.get(col("Z")));
 
 		Map<ColumnHeader, String> actual = new HashMap<ColumnHeader, String>();
@@ -82,7 +84,7 @@ public class SheetBasedTest {
 						+ Padder.leftPadder('0', 2).pad(intToHex(rawFrame))
 						+ this.row.get(col("Z")).toLowerCase());
 		assertEquals(this.row.get(col("H")).toLowerCase(),
-				generator.message(function).asString().toLowerCase());
+				generator.build(function).asString().toLowerCase());
 	}
 
 	private void assertRowEquals(Map<ColumnHeader, String> expected,

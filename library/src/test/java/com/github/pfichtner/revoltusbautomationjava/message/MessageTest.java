@@ -6,10 +6,12 @@ import static org.junit.Assert.assertArrayEquals;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MessageGeneratorTest {
+import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
 
-	private MessageGenerator defaults = new MessageGenerator();
-	private MessageGenerator msfFin0018 = new MessageGenerator().msgFin("0018");
+public class MessageTest {
+
+	private MessageBuilder defaults = new MessageBuilder();
+	private MessageBuilder msfFin0018 = new MessageBuilder().msgFin("0018");
 
 	@Test
 	public void switchOutletOneWithDefaults() {
@@ -31,13 +33,12 @@ public class MessageGeneratorTest {
 						0, 24 });
 	}
 
-	private void assertEquals(Function function, MessageGenerator mg,
+	private void assertEquals(Function function, MessageBuilder builder,
 			String expectedHex, byte[] expectedBytes) {
-		String msg = mg.message(function).asString();
-		Assert.assertEquals(expectedHex, msg);
-		byte[] bytes = mg.message(function).asBytes();
-		assertArrayEquals(expectedBytes, bytes);
-		assertArrayEquals(hexToBytes(expectedHex), bytes);
+		Message message = builder.build(function);
+		Assert.assertEquals(expectedHex, message.asString());
+		assertArrayEquals(expectedBytes, message.asBytes());
+		assertArrayEquals(hexToBytes(expectedHex), message.asBytes());
 	}
 
 }

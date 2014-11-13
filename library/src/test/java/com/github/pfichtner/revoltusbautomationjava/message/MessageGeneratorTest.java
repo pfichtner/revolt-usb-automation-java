@@ -33,9 +33,9 @@ public class MessageGeneratorTest {
 
 	private void assertEquals(Function function, MessageGenerator mg,
 			String expectedHex, byte[] expectedBytes) {
-		String msg = mg.hexMessage(function);
+		String msg = mg.message(function).asString();
 		Assert.assertEquals(expectedHex, msg);
-		byte[] bytes = mg.bytesMessage(function);
+		byte[] bytes = mg.message(function).asBytes();
 		assertArrayEquals(expectedBytes, bytes);
 		assertArrayEquals(hexToBytes(expectedHex), bytes);
 	}

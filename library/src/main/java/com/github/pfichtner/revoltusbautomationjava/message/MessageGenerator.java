@@ -40,16 +40,12 @@ public class MessageGenerator {
 		return this;
 	}
 
-	public String hexMessage(Function function) {
+	public Message message(Function function) {
 		String msgPaddingBytes = "20"; // not relevant padding
 		String msgAction = rightPadder('0', 2).pad(intToHex(function.asInt()));
 		String msgFrame = leftPadder('0', 2).pad(intToHex(this.rawFrames));
-		return this.rawId + msgAction + getChecksum(function) + msgPaddingBytes
-				+ msgFrame + this.msgFin;
-	}
-
-	public byte[] bytesMessage(Function function) {
-		return hexToBytes(hexMessage(function));
+		return new Message(this.rawId + msgAction + getChecksum(function)
+				+ msgPaddingBytes + msgFrame + this.msgFin);
 	}
 
 	public String getChecksum(Function function) {

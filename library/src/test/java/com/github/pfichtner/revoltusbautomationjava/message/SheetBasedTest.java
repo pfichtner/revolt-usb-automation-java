@@ -81,8 +81,8 @@ public class SheetBasedTest {
 						+ this.row.get(col("X"))
 						+ Padder.leftPadder('0', 2).pad(intToHex(rawFrame))
 						+ this.row.get(col("Z")).toLowerCase());
-		assertEquals(this.row.get(col("H")).toLowerCase(), generator
-				.hexMessage(function).toLowerCase());
+		assertEquals(this.row.get(col("H")).toLowerCase(),
+				generator.message(function).asString().toLowerCase());
 	}
 
 	private void assertRowEquals(Map<ColumnHeader, String> expected,

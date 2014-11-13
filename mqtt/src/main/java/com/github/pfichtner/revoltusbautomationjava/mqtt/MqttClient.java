@@ -95,8 +95,9 @@ public class MqttClient {
 				if (outlet != null || isAll) {
 					Outlet[] outlets = isAll ? Outlet.all()
 							: new Outlet[] { Outlet.of(outlet.intValue()) };
-					this.usb.write(this.messageGenerator.bytesMessage(Function
-							.of(outlets, State.forString(split[1]))));
+					this.usb.write(this.messageGenerator.message(
+							Function.of(outlets, State.forString(split[1])))
+							.asBytes());
 				}
 			}
 		}

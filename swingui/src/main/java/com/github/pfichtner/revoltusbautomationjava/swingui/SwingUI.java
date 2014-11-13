@@ -208,7 +208,8 @@ public class SwingUI extends JFrame {
 			final State state) {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				usb.write(msgGenerator.bytesMessage(Function.of(outlets, state)));
+				usb.write(msgGenerator.message(Function.of(outlets, state))
+						.asBytes());
 			}
 		};
 	}

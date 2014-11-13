@@ -28,7 +28,8 @@ public class Main {
 	@Option(name = "-outlet", metaVar = "1-4 or ALL", required = true)
 	public void setOutlet(String outlet) {
 		this.outlets = "ALL".equalsIgnoreCase(outlet) ? Outlet.all()
-				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0').trim(outlet))) };
+				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0')
+						.trim(outlet))) };
 	}
 
 	@Option(name = "-state", required = true)
@@ -51,8 +52,12 @@ public class Main {
 
 	@Option(name = "-msgFin")
 	public void setMsgFin(String msgFin) {
+		this.msgFin = makeAsLongAsCurrent(msgFin);
+	}
+
+	private String makeAsLongAsCurrent(String msgFin) {
 		int length = msgFin.length();
-		this.msgFin = leftPadder('0', length).pad(msgFin).substring(0, length);
+		return leftPadder('0', length).pad(msgFin).substring(0, length);
 	}
 
 	// ------------------------------------------------------------------------
@@ -83,8 +88,8 @@ public class Main {
 		}
 		Usb usb = newUsb();
 		try {
-			usb.write(newMessageGenerator().bytesMessage(
-					Function.of(this.outlets, this.state)));
+			usb.write(newMessageGenerator().message(
+					Function.of(this.outlets, this.state)).asBytes());
 		} finally {
 			usb.close();
 		}

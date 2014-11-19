@@ -12,7 +12,7 @@ public class Message {
 	public static class MessageBuilder {
 
 		private int rawFrames = 10;
-		private String rawId = "6789";
+		private String rawId = leftPadder('0', 4).pad(intToHex(6789));
 		private String msgFin = "0000";
 
 		public MessageBuilder rawFrames(int rawFrames) {

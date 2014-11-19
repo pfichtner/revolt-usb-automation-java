@@ -68,11 +68,11 @@ public class MqttClient {
 	public static class Callback implements MqttCallback {
 
 		private final Usb usb;
-		private final MessageBuilder messageGenerator;
+		private final MessageBuilder messageBuilder;
 
 		public Callback(Usb usb, MessageBuilder messageGenerator) {
 			this.usb = usb;
-			this.messageGenerator = messageGenerator;
+			this.messageBuilder = messageGenerator;
 		}
 
 		public void connectionLost(Throwable cause) {
@@ -88,7 +88,7 @@ public class MqttClient {
 				if (outlet != null || isAll) {
 					Outlet[] outlets = isAll ? Outlet.all()
 							: new Outlet[] { Outlet.of(outlet.intValue()) };
-					this.usb.write(this.messageGenerator.build(
+					this.usb.write(this.messageBuilder.build(
 							Function.of(outlets, State.forString(split[1])))
 							.asBytes());
 				}

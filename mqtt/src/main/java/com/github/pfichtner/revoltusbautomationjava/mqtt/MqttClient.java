@@ -101,12 +101,16 @@ public class MqttClient {
 
 	}
 
+	public void setBrokerTopic(String brokerTopic) {
+		this.brokerTopic = brokerTopic;
+	}
+
 	public static void main(String[] args) throws MqttException,
 			InterruptedException {
 		new MqttClient().doMain(args);
 	}
 
-	private Usb newUsb() {
+	protected Usb newUsb() {
 		Usb usb = Usb.newInstance(this.vendorId, this.productId).connect();
 		usb = this.interfaceNum == null ? usb : usb
 				.interfaceNum(this.interfaceNum.intValue());
@@ -128,7 +132,7 @@ public class MqttClient {
 		return generator;
 	}
 
-	public void doMain(String[] args) throws MqttException,
+	public void doMain(String... args) throws MqttException,
 			InterruptedException {
 		CmdLineParser cmdLineParser = new CmdLineParser(this);
 		try {

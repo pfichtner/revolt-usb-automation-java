@@ -8,7 +8,7 @@ public enum State {
 
 	public static State forString(String stateIdentifier) {
 		for (State state : values()) {
-			if (state.getIdentifier().equals(stateIdentifier)) {
+			if (state.getIdentifier().equalsIgnoreCase(stateIdentifier)) {
 				return state;
 			}
 		}

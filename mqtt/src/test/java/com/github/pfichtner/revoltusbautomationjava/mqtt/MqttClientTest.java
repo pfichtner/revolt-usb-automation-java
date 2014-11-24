@@ -3,6 +3,7 @@ package com.github.pfichtner.revoltusbautomationjava.mqtt;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class MqttClientTest {
 		verify(mock).write(
 				new MessageBuilder().build(Function.of(outlet, state))
 						.asBytes());
-
+		verifyNoMoreInteractions(mock);
 	}
 
 	private org.eclipse.paho.client.mqttv3.MqttClient mqttClient()

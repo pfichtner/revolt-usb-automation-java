@@ -6,7 +6,6 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -79,7 +78,20 @@ public class MqttClient {
 		}
 
 		public void connectionLost(Throwable cause) {
-			// do nothing
+			org.eclipse.paho.client.mqttv3.MqttClient client = MqttClient.this.client;
+			do {
+				try {
+					TimeUnit.SECONDS.sleep(1);
+				} catch (InterruptedException e1) {
+					Thread.currentThread().interrupt();
+				}
+				try {
+					client.connect();
+					client.subscribe(MqttClient.this.brokerTopic);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} while (!client.isConnected());
 		}
 
 		public void messageArrived(String topic, MqttMessage message) {
@@ -184,31 +196,7 @@ public class MqttClient {
 			int port, String clientId) throws MqttException,
 			MqttSecurityException {
 		org.eclipse.paho.client.mqttv3.MqttClient client = new org.eclipse.paho.client.mqttv3.MqttClient(
-				"tcp://" + host + ":" + port, clientId) {
-
-			@Override
-			public void publish(String topic, byte[] payload, int qos,
-					boolean retained) throws MqttException,
-					MqttPersistenceException {
-				ensureConnected();
-				super.publish(topic, payload, qos, retained);
-			}
-
-			@Override
-			public void publish(String topic, MqttMessage message)
-					throws MqttException, MqttPersistenceException {
-				ensureConnected();
-				super.publish(topic, message);
-			}
-
-			private void ensureConnected() throws MqttSecurityException,
-					MqttException {
-				if (!isConnected()) {
-					connect();
-				}
-			}
-
-		};
+				"tcp://" + host + ":" + port, clientId);
 		client.connect();
 		return client;
 	}

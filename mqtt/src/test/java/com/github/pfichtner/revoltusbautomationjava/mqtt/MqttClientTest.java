@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.dna.mqtt.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -25,10 +26,9 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 public class MqttClientTest {
 
 	@Test
-	public void test() throws IOException, MqttException, InterruptedException {
-
-		Server broker = new Server();
-		broker.startServer();
+	public void testSimple() throws IOException, MqttException,
+			InterruptedException {
+		Server broker = startBroker();
 		final List<Exception> exceptions = new ArrayList<Exception>();
 		final Usb mock = mock(Usb.class);
 
@@ -64,6 +64,59 @@ public class MqttClientTest {
 		verifyNoMoreInteractions(mock);
 	}
 
+	@Test
+	public void testReconnect() throws InterruptedException, IOException,
+			MqttSecurityException, MqttException {
+		Server broker = startBroker();
+		final List<Exception> exceptions = new ArrayList<Exception>();
+		final Usb mock = mock(Usb.class);
+
+		try {
+			final MqttClient client = new MqttClient() {
+				@Override
+				protected Usb newUsb() {
+					return mock;
+				}
+			};
+
+			String topic = "/foo/bar";
+
+			Outlet outlet = Outlet.ONE;
+			State state = State.ON;
+
+			startClientInBackground(exceptions, client, topic);
+
+			broker.stopServer();
+			broker = startBroker();
+
+			org.eclipse.paho.client.mqttv3.MqttClient mqttClient = mqttClient();
+			try {
+				startClientInBackground(exceptions, client, topic);
+				mqttClient.publish(topic, new MqttMessage((outlet.getIndex()
+						+ "=" + state.getIdentifier()).getBytes()));
+				TimeUnit.SECONDS.sleep(3);
+			} finally {
+				mqttClient.disconnect();
+			}
+
+			verify(mock).write(
+					new MessageBuilder().build(Function.of(outlet, state))
+							.asBytes());
+			verifyNoMoreInteractions(mock);
+
+		} finally {
+			broker.stopServer();
+		}
+
+		assertTrue(exceptions.isEmpty());
+	}
+
+	private Server startBroker() throws IOException {
+		Server broker = new Server();
+		broker.startServer();
+		return broker;
+	}
+
 	private org.eclipse.paho.client.mqttv3.MqttClient mqttClient()
 			throws MqttException, MqttSecurityException {
 		org.eclipse.paho.client.mqttv3.MqttClient mqttClient = new org.eclipse.paho.client.mqttv3.MqttClient(
@@ -93,7 +146,15 @@ public class MqttClientTest {
 				}
 			}
 		};
-		TimeUnit.SECONDS.sleep(3);
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		while (!client.isConnected()) {
+			TimeUnit.MILLISECONDS.sleep(250);
+			if (stopWatch.getTime() > TimeUnit.SECONDS.toMillis(5)) {
+				throw new IllegalStateException(
+						"Could not connect within 5 seconds");
+			}
+		}
 	}
 
 }

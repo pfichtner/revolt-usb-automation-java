@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -65,7 +66,9 @@ public class MqttClient {
 	@Option(name = "--usbTimeout", hidden = true, metaVar = "usb send timeout in milliseconds")
 	private Long timeout;
 
-	public static class Callback implements MqttCallback {
+	private org.eclipse.paho.client.mqttv3.MqttClient client;
+
+	public class Callback implements MqttCallback {
 
 		private final Usb usb;
 		private final MessageBuilder messageBuilder;
@@ -76,7 +79,7 @@ public class MqttClient {
 		}
 
 		public void connectionLost(Throwable cause) {
-			// nothing to do
+			// do nothing
 		}
 
 		public void messageArrived(String topic, MqttMessage message) {
@@ -146,15 +149,15 @@ public class MqttClient {
 		Usb usb = newUsb();
 		MessageBuilder messageGenerator = newMessageGenerator();
 		try {
-			org.eclipse.paho.client.mqttv3.MqttClient client = connect(
-					this.brokerHost, this.brokerPort, this.clientId);
+			this.client = connect(this.brokerHost, this.brokerPort,
+					this.clientId);
 			try {
-				client.subscribe(this.brokerTopic);
-				client.setCallback(new Callback(usb, messageGenerator));
+				this.client.subscribe(this.brokerTopic);
+				this.client.setCallback(new Callback(usb, messageGenerator));
 				wait4ever();
 			} finally {
-				client.disconnect();
-				client.close();
+				this.client.disconnect();
+				this.client.close();
 			}
 		} finally {
 			usb.close();
@@ -181,9 +184,37 @@ public class MqttClient {
 			int port, String clientId) throws MqttException,
 			MqttSecurityException {
 		org.eclipse.paho.client.mqttv3.MqttClient client = new org.eclipse.paho.client.mqttv3.MqttClient(
-				"tcp://" + host + ":" + port, clientId);
+				"tcp://" + host + ":" + port, clientId) {
+
+			@Override
+			public void publish(String topic, byte[] payload, int qos,
+					boolean retained) throws MqttException,
+					MqttPersistenceException {
+				ensureConnected();
+				super.publish(topic, payload, qos, retained);
+			}
+
+			@Override
+			public void publish(String topic, MqttMessage message)
+					throws MqttException, MqttPersistenceException {
+				ensureConnected();
+				super.publish(topic, message);
+			}
+
+			private void ensureConnected() throws MqttSecurityException,
+					MqttException {
+				if (!isConnected()) {
+					connect();
+				}
+			}
+
+		};
 		client.connect();
 		return client;
+	}
+
+	public boolean isConnected() {
+		return this.client != null && this.client.isConnected();
 	}
 
 }

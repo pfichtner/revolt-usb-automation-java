@@ -18,3 +18,9 @@ Example entry into items: ```Switch MyItem "MyItem" (GF_Living, Lights) {mqtt=">
 * A Java/SwingUI application that runs all plattforms http://usb4java.org/ runs (currently Linux x86 32/64 bit/ARM 32 bit; OS X x86 32/64 bit;Windows x86 32/64 bit) very similar to the distributed proprietary Windows EXE
 ![SwingUI Screenshot](https://pfichtner.github.io/revolt-usb-automation-java/screenshots/swingui.png)
 * A sh based cgi-bin that shows on/off buttons where you can refer your favourite script/binary to switch outlets
+
+To communicate with the usb devie [usb4java](http://usb4java.org/) ist used. So please take a look at  http://usb4java.org/faq.html for device permissions. E.g. on linux you have to create a file named ```/etc/udev/rules.d/99-userusbdevices.rules``` containing a line
+> SUBSYSTEM=="usb",ATTR{idVendor}=="ffff",ATTR{idProduct}=="1122",MODE="0660",GROUP="gpio"
+
+Please replace gpio by a group your user belongs to. 
+

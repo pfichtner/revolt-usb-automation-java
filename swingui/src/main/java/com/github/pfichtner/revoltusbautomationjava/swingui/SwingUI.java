@@ -96,8 +96,18 @@ public class SwingUI extends JFrame {
 		setLocationRelativeTo(null);
 
 		Thread.setDefaultUncaughtExceptionHandler(new JLabelExceptionHandler(
-				status));
+				status) {
 
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				e.printStackTrace();
+				super.uncaughtException(t, e);
+			}
+
+		});
+	}
+
+	private void connectUsb() {
 		if (usb.hasHotplug()) {
 			usb.registerCallback(new UsbHotPlugEventListener() {
 
@@ -228,7 +238,9 @@ public class SwingUI extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new SwingUI().setVisible(true);
+				SwingUI swingUI = new SwingUI();
+				swingUI.setVisible(true);
+				swingUI.connectUsb();
 			}
 		});
 	}

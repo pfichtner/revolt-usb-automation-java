@@ -2,6 +2,7 @@ package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import com.codeminders.hidapi.HIDDevice;
@@ -15,12 +16,9 @@ public class UsbCodeminers implements Usb, Closeable {
 
 	public boolean connected;
 
-	private HIDManager hidManager;
-
 	private HIDDevice device;
 
-	private UsbCodeminers(short vendorId, short productId) throws IOException {
-		this.hidManager = HIDManager.getInstance();
+	private UsbCodeminers(short vendorId, short productId) {
 		this.vendorId = vendorId;
 		this.productId = productId;
 	}
@@ -29,8 +27,7 @@ public class UsbCodeminers implements Usb, Closeable {
 		return null;
 	}
 
-	public static UsbCodeminers newInstance(short vendorId, short productId)
-			throws IOException {
+	public static UsbCodeminers newInstance(short vendorId, short productId) {
 		return new UsbCodeminers(vendorId, productId);
 	}
 
@@ -47,13 +44,16 @@ public class UsbCodeminers implements Usb, Closeable {
 	}
 
 	public void connect() throws IOException {
-		device = hidManager.openById(vendorId, productId, noSerialNumber());
-		connected = true;
+		HIDManager hidManager = HIDManager.getInstance();
+		System.out.println(Arrays.toString(hidManager.listDevices()));
+		this.device = hidManager.openById(this.vendorId, this.productId,
+				noSerialNumber());
+		this.connected = true;
 	}
 
 	public void close() throws IOException {
 		this.device.close();
-		this.hidManager.release();
+		HIDManager.getInstance().release();
 	}
 
 	public void write(byte[] data) throws IOException {

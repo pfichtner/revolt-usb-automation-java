@@ -2,6 +2,7 @@ package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDManager;
@@ -33,10 +34,21 @@ public class UsbCodeminers implements Usb, Closeable {
 		return new UsbCodeminers(vendorId, productId);
 	}
 
-	public UsbCodeminers connect() throws IOException {
+	public void setInterfaceNum(int intValue) {
+		// do nothing
+	}
+
+	public void setOutEndpoint(byte byteValue) {
+		// do nothing
+	}
+
+	public void setTimeout(TimeUnit timeUnit, long longValue) {
+		// do nothing
+	}
+
+	public void connect() throws IOException {
 		device = hidManager.openById(vendorId, productId, noSerialNumber());
 		connected = true;
-		return this;
 	}
 
 	public void close() throws IOException {

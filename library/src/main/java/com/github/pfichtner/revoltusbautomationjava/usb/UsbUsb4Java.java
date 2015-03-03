@@ -52,26 +52,22 @@ public class UsbUsb4Java implements Usb, Closeable {
 		return new UsbUsb4Java(vendorId, productId);
 	}
 
-	public UsbUsb4Java connect() {
+	public void connect() {
 		this.deviceHandle = getDeviceHandle(findDevice(vendorId, productId));
 		claimInterface(this.deviceHandle, this.interfaceNum);
 		connected = true;
-		return this;
 	}
 
-	public UsbUsb4Java interfaceNum(int interfaceNum) {
+	public void setInterfaceNum(int interfaceNum) {
 		this.interfaceNum = interfaceNum;
-		return this;
 	}
 
-	public UsbUsb4Java outEndpoint(byte outEndpoint) {
+	public void setOutEndpoint(byte outEndpoint) {
 		this.outEndpoint = outEndpoint;
-		return this;
 	}
 
-	public UsbUsb4Java timeout(TimeUnit timeUnit, long value) {
+	public void setTimeout(TimeUnit timeUnit, long value) {
 		this.timeout = timeUnit.toMillis(value);
-		return this;
 	}
 
 	private DeviceHandle getDeviceHandle(Device device) {

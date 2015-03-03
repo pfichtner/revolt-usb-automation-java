@@ -1,6 +1,7 @@
 package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public interface Usb {
 
@@ -14,7 +15,13 @@ public interface Usb {
 
 	}
 
-	Usb connect() throws IOException;
+	void setInterfaceNum(int intValue);
+
+	void setOutEndpoint(byte byteValue);
+
+	void setTimeout(TimeUnit timeUnit, long longValue);
+
+	void connect() throws IOException;
 
 	void close() throws IOException;
 

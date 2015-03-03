@@ -96,7 +96,8 @@ public class MqttClient {
 			} while (!client.isConnected());
 		}
 
-		public void messageArrived(String topic, MqttMessage message) throws IOException {
+		public void messageArrived(String topic, MqttMessage message)
+				throws IOException {
 			String payload = new String(message.getPayload());
 			String[] split = payload.split("\\=");
 			if (split.length == 2) {
@@ -127,14 +128,17 @@ public class MqttClient {
 		new MqttClient().doMain(args);
 	}
 
-	protected Usb newUsb() {
-		UsbUsb4Java usb = UsbUsb4Java.newInstance(this.vendorId, this.productId).connect();
-		usb = this.interfaceNum == null ? usb : usb
-				.interfaceNum(this.interfaceNum.intValue());
-		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint
-				.byteValue());
-		usb = this.timeout == null ? usb : usb.timeout(TimeUnit.MILLISECONDS,
-				this.timeout.longValue());
+	protected Usb newUsb() throws IOException {
+		Usb usb = UsbUsb4Java.newInstance(this.vendorId, this.productId);
+		usb.connect();
+		if (this.interfaceNum != null) {
+			usb.setInterfaceNum(this.interfaceNum.intValue());
+		}
+		if (this.outEndpoint != null)
+			usb.setOutEndpoint(this.outEndpoint.byteValue());
+		if (this.timeout != null) {
+			usb.setTimeout(TimeUnit.MILLISECONDS, this.timeout.longValue());
+		}
 		return usb;
 	}
 

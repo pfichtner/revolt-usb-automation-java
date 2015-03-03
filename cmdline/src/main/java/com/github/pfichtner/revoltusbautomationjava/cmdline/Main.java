@@ -90,7 +90,7 @@ public class Main {
 		UsbUsb4Java usb = UsbUsb4Java.newInstance(this.vendorId, this.productId).connect();
 		usb = this.interfaceNum == null ? usb : usb
 				.interfaceNum(this.interfaceNum.intValue());
-		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint
+		usb = this.outEndpoint == null ? usb : usb.setOutEndpoint(this.outEndpoint
 				.byteValue());
 		usb = this.timeout == null ? usb : usb.timeout(TimeUnit.MILLISECONDS,
 				this.timeout.longValue());

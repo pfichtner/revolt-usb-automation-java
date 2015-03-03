@@ -17,8 +17,8 @@ import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuild
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
+import com.github.pfichtner.revoltusbautomationjava.usb.ClasspathDependentUsb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
-import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 public class MqttClient {
 
@@ -129,7 +129,8 @@ public class MqttClient {
 	}
 
 	protected Usb newUsb() throws IOException {
-		Usb usb = UsbUsb4Java.newInstance(this.vendorId, this.productId);
+		Usb usb = ClasspathDependentUsb.newInstance(this.vendorId,
+				this.productId);
 		usb.connect();
 		if (this.interfaceNum != null) {
 			usb.setInterfaceNum(this.interfaceNum.intValue());

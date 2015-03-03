@@ -12,8 +12,8 @@ import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuild
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
+import com.github.pfichtner.revoltusbautomationjava.usb.ClasspathDependentUsb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
-import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 public class Main {
 
@@ -86,14 +86,19 @@ public class Main {
 		}
 	}
 
-	private Usb newUsb() {
-		UsbUsb4Java usb = UsbUsb4Java.newInstance(this.vendorId, this.productId).connect();
-		usb = this.interfaceNum == null ? usb : usb
-				.interfaceNum(this.interfaceNum.intValue());
-		usb = this.outEndpoint == null ? usb : usb.setOutEndpoint(this.outEndpoint
-				.byteValue());
-		usb = this.timeout == null ? usb : usb.timeout(TimeUnit.MILLISECONDS,
-				this.timeout.longValue());
+	private Usb newUsb() throws IOException {
+		Usb usb = ClasspathDependentUsb.newInstance(this.vendorId,
+				this.productId);
+		usb.connect();
+		if (this.interfaceNum != null) {
+			usb.setInterfaceNum(this.interfaceNum.intValue());
+		}
+		if (this.outEndpoint != null) {
+			usb.setOutEndpoint(this.outEndpoint.byteValue());
+		}
+		if (this.timeout != null) {
+			usb.setTimeout(TimeUnit.MILLISECONDS, this.timeout.longValue());
+		}
 		return usb;
 	}
 

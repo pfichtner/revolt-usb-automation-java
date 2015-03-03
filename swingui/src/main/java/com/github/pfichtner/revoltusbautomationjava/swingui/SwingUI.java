@@ -27,10 +27,9 @@ import com.github.pfichtner.revoltusbautomationjava.message.Function;
 import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuilder;
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
+import com.github.pfichtner.revoltusbautomationjava.usb.ClasspathDependentUsb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
-import com.github.pfichtner.revoltusbautomationjava.usb.UsbCodeminers;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
-import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 /**
  * SwingUI of project com.github.pfichtner.revoltusbautomationjava.swingui.
@@ -45,7 +44,8 @@ public class SwingUI extends JFrame {
 
 	private static final long serialVersionUID = -7029240022142504077L;
 
-	private final Usb usb = UsbUsb4Java.newInstance(vendorId, productId);
+	private final Usb usb = ClasspathDependentUsb.newInstance(vendorId,
+			productId);
 
 	private MessageBuilder msgBuilder = new MessageBuilder();
 

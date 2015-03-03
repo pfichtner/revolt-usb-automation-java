@@ -28,6 +28,7 @@ import com.github.pfichtner.revoltusbautomationjava.message.Message.MessageBuild
 import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
+import com.github.pfichtner.revoltusbautomationjava.usb.UsbCodeminers;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
 import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
@@ -77,7 +78,7 @@ public class SwingUI extends JFrame {
 		status.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		getContentPane().add(status, BorderLayout.SOUTH);
 
-		disconneted();
+		disconnected();
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -116,7 +117,7 @@ public class SwingUI extends JFrame {
 				}
 
 				public void deviceDisconnected(short idVendor, short idProduct) {
-					disconneted();
+					disconnected();
 				}
 
 				public void errorConnecting(short idVendor, short idProduct,
@@ -196,7 +197,7 @@ public class SwingUI extends JFrame {
 		setState(true);
 	}
 
-	private void disconneted() {
+	private void disconnected() {
 		status.setText("Device is not connected");
 		setState(false);
 	}

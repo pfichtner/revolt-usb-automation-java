@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -28,6 +29,7 @@ import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb.UsbHotPlugEventListener;
+import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 /**
  * SwingUI of project com.github.pfichtner.revoltusbautomationjava.swingui.
@@ -42,7 +44,7 @@ public class SwingUI extends JFrame {
 
 	private static final long serialVersionUID = -7029240022142504077L;
 
-	private final Usb usb = Usb.newInstance(vendorId, productId);
+	private final Usb usb = UsbUsb4Java.newInstance(vendorId, productId);
 
 	private MessageBuilder msgBuilder = new MessageBuilder();
 
@@ -79,9 +81,13 @@ public class SwingUI extends JFrame {
 
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(WindowEvent event) {
 				if (connected) {
-					usb.close();
+					try {
+						usb.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
 			}
 
@@ -208,9 +214,13 @@ public class SwingUI extends JFrame {
 	private ActionListener newaddActionListener(final Outlet[] outlets,
 			final State state) {
 		return new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				usb.write(msgBuilder.build(Function.of(outlets, state))
-						.asBytes());
+			public void actionPerformed(ActionEvent event) {
+				try {
+					usb.write(msgBuilder.build(Function.of(outlets, state))
+							.asBytes());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		};
 	}

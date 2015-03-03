@@ -1,5 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -12,6 +13,7 @@ import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
+import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 public class Main {
 
@@ -62,11 +64,11 @@ public class Main {
 
 	// ------------------------------------------------------------------------
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		new Main().doMain(args);
 	}
 
-	private void doMain(String[] args) {
+	private void doMain(String[] args) throws IOException {
 		CmdLineParser cmdLineParser = new CmdLineParser(this);
 		try {
 			cmdLineParser.parseArgument(args);
@@ -85,7 +87,7 @@ public class Main {
 	}
 
 	private Usb newUsb() {
-		Usb usb = Usb.newInstance(this.vendorId, this.productId).connect();
+		UsbUsb4Java usb = UsbUsb4Java.newInstance(this.vendorId, this.productId).connect();
 		usb = this.interfaceNum == null ? usb : usb
 				.interfaceNum(this.interfaceNum.intValue());
 		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint

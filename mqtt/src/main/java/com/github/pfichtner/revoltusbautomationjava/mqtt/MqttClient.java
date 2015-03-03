@@ -1,5 +1,6 @@
 package com.github.pfichtner.revoltusbautomationjava.mqtt;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -17,6 +18,7 @@ import com.github.pfichtner.revoltusbautomationjava.message.Outlet;
 import com.github.pfichtner.revoltusbautomationjava.message.State;
 import com.github.pfichtner.revoltusbautomationjava.message.Trimmer;
 import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
+import com.github.pfichtner.revoltusbautomationjava.usb.UsbUsb4Java;
 
 public class MqttClient {
 
@@ -94,7 +96,7 @@ public class MqttClient {
 			} while (!client.isConnected());
 		}
 
-		public void messageArrived(String topic, MqttMessage message) {
+		public void messageArrived(String topic, MqttMessage message) throws IOException {
 			String payload = new String(message.getPayload());
 			String[] split = payload.split("\\=");
 			if (split.length == 2) {
@@ -121,12 +123,12 @@ public class MqttClient {
 	}
 
 	public static void main(String[] args) throws MqttException,
-			InterruptedException {
+			InterruptedException, IOException {
 		new MqttClient().doMain(args);
 	}
 
 	protected Usb newUsb() {
-		Usb usb = Usb.newInstance(this.vendorId, this.productId).connect();
+		UsbUsb4Java usb = UsbUsb4Java.newInstance(this.vendorId, this.productId).connect();
 		usb = this.interfaceNum == null ? usb : usb
 				.interfaceNum(this.interfaceNum.intValue());
 		usb = this.outEndpoint == null ? usb : usb.outEndpoint(this.outEndpoint
@@ -148,7 +150,7 @@ public class MqttClient {
 	}
 
 	public void doMain(String... args) throws MqttException,
-			InterruptedException {
+			InterruptedException, IOException {
 		CmdLineParser cmdLineParser = new CmdLineParser(this);
 		try {
 			cmdLineParser.parseArgument(args);

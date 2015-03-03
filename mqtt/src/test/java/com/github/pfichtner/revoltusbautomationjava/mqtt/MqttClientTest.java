@@ -143,6 +143,8 @@ public class MqttClientTest {
 					exceptions.add(e);
 				} catch (InterruptedException e) {
 					exceptions.add(e);
+				} catch (IOException e) {
+					exceptions.add(e);
 				}
 			}
 		};

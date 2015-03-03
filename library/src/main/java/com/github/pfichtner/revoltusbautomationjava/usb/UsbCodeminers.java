@@ -5,22 +5,31 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import com.codeminders.hidapi.ClassPathLibraryLoader;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDManager;
 
 public class UsbCodeminers implements Usb, Closeable {
 
-	private short vendorId;
+	static {
+		ClassPathLibraryLoader.loadNativeHIDLibrary();
+	}
 
-	private short productId;
+	private int vendorId;
+
+	private int productId;
 
 	public boolean connected;
 
 	private HIDDevice device;
 
 	private UsbCodeminers(short vendorId, short productId) {
-		this.vendorId = vendorId;
-		this.productId = productId;
+		this.vendorId = toUint32(vendorId);
+		this.productId = toUint32(productId);
+	}
+
+	private static int toUint32(short shortVal) {
+		return shortVal & 0xFFFF;
 	}
 
 	private String noSerialNumber() {

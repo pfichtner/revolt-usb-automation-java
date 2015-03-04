@@ -2,7 +2,6 @@ package com.github.pfichtner.revoltusbautomationjava.usb;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;

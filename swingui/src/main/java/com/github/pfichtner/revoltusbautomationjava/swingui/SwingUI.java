@@ -132,7 +132,11 @@ public class SwingUI extends JFrame {
 				usb.connect();
 				connected();
 			} catch (Exception e) {
-				this.status.setText(e.getMessage());
+				e.printStackTrace();
+				String message = e.getMessage();
+				if (message != null) {
+					this.status.setText(message);
+				}
 			}
 		}
 	}

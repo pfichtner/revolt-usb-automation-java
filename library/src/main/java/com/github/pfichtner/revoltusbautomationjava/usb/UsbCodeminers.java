@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;
 import com.codeminders.hidapi.HIDDevice;
+import com.codeminders.hidapi.HIDDeviceInfo;
+import com.codeminders.hidapi.HIDDeviceNotFoundException;
 import com.codeminders.hidapi.HIDManager;
 
 public class UsbCodeminers implements Usb, Closeable {
@@ -51,8 +53,16 @@ public class UsbCodeminers implements Usb, Closeable {
 
 	public void connect() throws IOException {
 		HIDManager hidManager = HIDManager.getInstance();
-		this.device = hidManager.openById(this.vendorId, this.productId,
-				noSerialNumber());
+		this.device = fixCodeminersBugCheckForNullArray(hidManager).openById(
+				this.vendorId, this.productId, noSerialNumber());
+	}
+
+	private HIDManager fixCodeminersBugCheckForNullArray(HIDManager hidManager)
+			throws IOException, HIDDeviceNotFoundException {
+		if (hidManager.listDevices() == null) {
+			throw new HIDDeviceNotFoundException();
+		}
+		return hidManager;
 	}
 
 	public void close() throws IOException {

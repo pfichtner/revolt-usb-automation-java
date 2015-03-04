@@ -19,8 +19,6 @@ public class UsbCodeminers implements Usb, Closeable {
 
 	private int productId;
 
-	public boolean connected;
-
 	private HIDDevice device;
 
 	private UsbCodeminers(short vendorId, short productId) {
@@ -54,10 +52,8 @@ public class UsbCodeminers implements Usb, Closeable {
 
 	public void connect() throws IOException {
 		HIDManager hidManager = HIDManager.getInstance();
-		System.out.println(Arrays.toString(hidManager.listDevices()));
 		this.device = hidManager.openById(this.vendorId, this.productId,
 				noSerialNumber());
-		this.connected = true;
 	}
 
 	public void close() throws IOException {

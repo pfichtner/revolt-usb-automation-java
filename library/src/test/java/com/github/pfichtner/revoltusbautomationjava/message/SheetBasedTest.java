@@ -1,7 +1,7 @@
 package com.github.pfichtner.revoltusbautomationjava.message;
 
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.binToInt;
-import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hexToInt;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToBin;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.shiftLeft;
@@ -64,7 +64,7 @@ public class SheetBasedTest {
 		actual.put(col("O"), String.valueOf(generator.getSum(function)));
 		actual.put(col("P"), generator.getChecksum(function));
 		actual.put(col("Q"), generator.getChecksum(function));
-		String checkSum = Padder.leftPadder('0', 8).pad(intToBin(hex2Int(generator.getChecksum(function))));
+		String checkSum = Padder.leftPadder('0', 8).pad(intToBin(hexToInt(generator.getChecksum(function))));
 		actual.put(col("R"), checkSum);
 		String checksumByte1 = checkSum.substring(0, 4);
 		String checksumByte2 = checkSum.substring(4);

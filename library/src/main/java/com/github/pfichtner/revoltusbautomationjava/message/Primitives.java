@@ -20,7 +20,7 @@ public final class Primitives {
 		return Integer.toHexString(id);
 	}
 
-	public static int hex2Int(String hex) {
+	public static int hexToInt(String hex) {
 		return Integer.parseInt(hex, 16);
 	}
 

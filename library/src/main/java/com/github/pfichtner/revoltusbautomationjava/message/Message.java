@@ -2,7 +2,7 @@ package com.github.pfichtner.revoltusbautomationjava.message;
 
 import static com.github.pfichtner.revoltusbautomationjava.message.Padder.leftPadder;
 import static com.github.pfichtner.revoltusbautomationjava.message.Padder.rightPadder;
-import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hex2Int;
+import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hexToInt;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.hexToBytes;
 import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.intToHex;
 import static java.lang.Math.ceil;
@@ -30,7 +30,7 @@ public class Message {
 		}
 
 		public int getRawId() {
-			return hex2Int(this.rawId);
+			return hexToInt(this.rawId);
 		}
 
 		private String rawIdToString(int rawId) {
@@ -56,8 +56,8 @@ public class Message {
 		}
 
 		public int getSum(Function function) {
-			return hex2Int(this.rawId.substring(0, 2))
-					+ hex2Int(this.rawId.substring(2, 4)) + function.asInt()
+			return hexToInt(this.rawId.substring(0, 2))
+					+ hexToInt(this.rawId.substring(2, 4)) + function.asInt()
 					* 16;
 		}
 

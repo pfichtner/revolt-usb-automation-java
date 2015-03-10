@@ -42,36 +42,38 @@ public class Message {
 			return this;
 		}
 
-		public Message build(Function function) {
-			return new Message(this, function);
+		public Message build(PayloadSupplier payloadSupplier) {
+			return new Message(this, payloadSupplier);
 		}
 
-		public String getChecksum(Function function) {
-			return leftPadder('0', 2).pad(intToHex(getRawChecksum(function)));
+		public String getChecksum(PayloadSupplier payloadSupplier) {
+			return leftPadder('0', 2).pad(
+					intToHex(getRawChecksum(payloadSupplier)));
 		}
 
-		public int getRawChecksum(Function function) {
-			int sum = getSum(function);
+		public int getRawChecksum(PayloadSupplier payloadSupplier) {
+			int sum = getSum(payloadSupplier);
 			return (int) (ceil(sum / 256.0) * 256 - sum - 1);
 		}
 
-		public int getSum(Function function) {
+		public int getSum(PayloadSupplier payloadSupplier) {
 			return hexToInt(this.rawId.substring(0, 2))
-					+ hexToInt(this.rawId.substring(2, 4)) + function.asInt()
-					* 16;
+					+ hexToInt(this.rawId.substring(2, 4))
+					+ payloadSupplier.asInt() * 16;
 		}
 
 	}
 
 	private final String content;
 
-	public Message(MessageBuilder builder, Function function) {
+	public Message(MessageBuilder builder, PayloadSupplier payloadSupplier) {
 		String msgPaddingBytes = "20"; // not relevant padding
-		String msgAction = rightPadder('0', 2).pad(intToHex(function.asInt()));
+		String msgAction = rightPadder('0', 2).pad(
+				intToHex(payloadSupplier.asInt()));
 		String msgFrame = leftPadder('0', 2).pad(intToHex(builder.rawFrames));
 		this.content = builder.rawId + msgAction
-				+ builder.getChecksum(function) + msgPaddingBytes + msgFrame
-				+ builder.msgFin;
+				+ builder.getChecksum(payloadSupplier) + msgPaddingBytes
+				+ msgFrame + builder.msgFin;
 	}
 
 	public String asString() {

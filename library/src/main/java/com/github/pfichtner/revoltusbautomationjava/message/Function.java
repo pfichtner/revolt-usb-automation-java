@@ -5,7 +5,7 @@ import static com.github.pfichtner.revoltusbautomationjava.message.Primitives.in
 
 import java.util.Arrays;
 
-public abstract class Function {
+public abstract class Function implements PayloadSupplier {
 
 	private static final class SingleOutletFunction extends Function {
 

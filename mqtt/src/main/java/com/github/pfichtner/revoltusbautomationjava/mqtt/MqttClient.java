@@ -22,27 +22,27 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class MqttClient {
 
-	@Option(name = "-brokerTopic")
+	@Option(name = "-brokerTopic", usage = "Topic to register")
 	private String brokerTopic = "/home/automation/px1675";
 
-	@Option(name = "-brokerHost")
+	@Option(name = "-brokerHost", usage = "Hostname of the broker to connect to")
 	private String brokerHost = "localhost";
 
-	@Option(name = "-brokerPort")
+	@Option(name = "-brokerPort", usage = "Port of the broker to connect to")
 	private int brokerPort = 1883;
 
-	@Option(name = "-clientId")
+	@Option(name = "-clientId", usage = "This client's name")
 	private String clientId = "px1675";
 
-	@Option(name = "-vendorId")
+	@Option(name = "-vendorId", usage = "VendorId of the revolt usb stick")
 	private short vendorId = (short) 0xffff;
 
-	@Option(name = "-productId")
+	@Option(name = "-productId", usage = "ProductId of the revolt usb stick")
 	private short productId = 0x1122;
 
 	private Integer rawFrames = 10;
 
-	@Option(name = "-rawFrames", metaVar = "How many times the frame should be sent (3-255)")
+	@Option(name = "-rawFrames", usage = "How many times the frame should be sent (3-255)")
 	public void setRawFrames(int rawFrames) {
 		if (rawFrames < 3 || rawFrames > 255) {
 			throw new IllegalStateException("rawFrames must be 3-255");
@@ -50,21 +50,21 @@ public class MqttClient {
 		this.rawFrames = rawFrames;
 	}
 
-	@Option(name = "-rawId")
+	@Option(name = "-rawId", hidden = true, usage = "Fine tuning: RawId")
 	private Integer rawId;
 
-	@Option(name = "-msgFin")
+	@Option(name = "-msgFin", hidden = true, usage = "Fine tuning: MsgFin")
 	private String msgFin;
 
 	// ------------------------------------------------------------------------
 
-	@Option(name = "--usbInterface", hidden = true)
+	@Option(name = "--usbInterface", hidden = true, usage = "Fine tuning: InterfaceNum")
 	private Integer interfaceNum;
 
-	@Option(name = "--usbEndpoint", hidden = true)
+	@Option(name = "--usbEndpoint", hidden = true, usage = "Fine tuning: OutEndpoint")
 	private Byte outEndpoint;
 
-	@Option(name = "--usbTimeout", hidden = true, metaVar = "usb send timeout in milliseconds")
+	@Option(name = "--usbTimeout", hidden = true, usage = "usb send timeout in milliseconds")
 	private Long timeout;
 
 	private org.eclipse.paho.client.mqttv3.MqttClient client;

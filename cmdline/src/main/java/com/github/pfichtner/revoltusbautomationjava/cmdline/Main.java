@@ -17,27 +17,27 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class Main {
 
-	@Option(name = "-vendorId")
+	@Option(name = "-vendorId", usage = "VendorId of the revolt usb stick")
 	private short vendorId = (short) 0xffff;
 
-	@Option(name = "-productId")
+	@Option(name = "-productId", usage = "ProductId of the revolt usb stick")
 	private short productId = 0x1122;
 
 	private Outlet[] outlets;
 
-	@Option(name = "-outlet", metaVar = "1-4 or ALL", required = true)
+	@Option(name = "-outlet", usage = "Outlet to switch", metaVar = "1-4 or ALL", required = true)
 	public void setOutlet(String outlet) {
 		this.outlets = "ALL".equalsIgnoreCase(outlet) ? Outlet.all()
 				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0')
 						.trim(outlet))) };
 	}
 
-	@Option(name = "-state", required = true)
+	@Option(name = "-state", usage = "State of the outlet to set", required = true)
 	private State state;
 
 	private Integer rawFrames = 10;
 
-	@Option(name = "-rawFrames", metaVar = "How many times the frame should be sent (3-255)")
+	@Option(name = "-rawFrames", usage = "How many times the frame should be sent (3-255)")
 	public void setRawFrames(int rawFrames) {
 		if (rawFrames < 3 || rawFrames > 255) {
 			throw new IllegalStateException("rawFrames must be 3-255");
@@ -59,7 +59,7 @@ public class Main {
 	@Option(name = "--usbEndpoint", hidden = true)
 	private Byte outEndpoint;
 
-	@Option(name = "--usbTimeout", hidden = true, metaVar = "usb send timeout in milliseconds")
+	@Option(name = "--usbTimeout", hidden = true, usage = "usb send timeout in milliseconds")
 	private Long timeout;
 
 	// ------------------------------------------------------------------------

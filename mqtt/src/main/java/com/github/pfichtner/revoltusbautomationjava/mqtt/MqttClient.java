@@ -23,7 +23,7 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 public class MqttClient {
 
 	@Option(name = "-brokerTopic", usage = "Topic to register")
-	private String brokerTopic = "/home/automation/px1675";
+	private String brokerTopic = "home/automation/px1675";
 
 	@Option(name = "-brokerHost", usage = "Hostname of the broker to connect to")
 	private String brokerHost = "localhost";

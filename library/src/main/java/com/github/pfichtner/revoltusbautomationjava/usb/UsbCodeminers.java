@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.codeminders.hidapi.ClassPathLibraryLoader;
 import com.codeminders.hidapi.HIDDevice;
-import com.codeminders.hidapi.HIDDeviceInfo;
 import com.codeminders.hidapi.HIDDeviceNotFoundException;
 import com.codeminders.hidapi.HIDManager;
 

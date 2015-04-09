@@ -13,22 +13,9 @@ public class ClasspathDependentUsb implements Usb {
 	}
 
 	public ClasspathDependentUsb(short vendorId, short productId) {
-		this.delegate = isCodeMinersPresent() ? UsbCodeminers.newInstance(
-				vendorId, productId) : UsbUsb4Java.newInstance(vendorId,
-				productId);
-	}
-
-	private boolean isCodeMinersPresent() {
-		return existsClass("com.codeminders.hidapi.ClassPathLibraryLoader");
-	}
-
-	private boolean existsClass(String clazz) {
-		try {
-			getClass().getClassLoader().loadClass(clazz);
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
+		this.delegate = UsbUsb4Java.dependenciesOnClasspath() ? UsbUsb4Java
+				.newInstance(vendorId, productId) : UsbCodeminers.newInstance(
+				vendorId, productId);
 	}
 
 	public void setInterfaceNum(int intValue) {

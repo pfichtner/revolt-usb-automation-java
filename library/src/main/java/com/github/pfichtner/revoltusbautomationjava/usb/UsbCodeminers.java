@@ -82,4 +82,10 @@ public class UsbCodeminers implements Usb, Closeable {
 		throw new UnsupportedOperationException("hotplug not supported");
 	}
 
+	public static boolean dependenciesOnClasspath() {
+		return Reflections.existsClass(
+				"com.codeminders.hidapi.ClassPathLibraryLoader",
+				UsbCodeminers.class.getClassLoader());
+	}
+
 }

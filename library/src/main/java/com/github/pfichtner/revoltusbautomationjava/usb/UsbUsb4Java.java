@@ -209,4 +209,9 @@ public class UsbUsb4Java implements Usb, Closeable {
 
 	}
 
+	public static boolean dependenciesOnClasspath() {
+		return Reflections.existsClass("org.usb4java.LibUsb",
+				UsbUsb4Java.class.getClassLoader());
+	}
+
 }

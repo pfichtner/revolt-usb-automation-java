@@ -92,6 +92,14 @@
 							<mainClass>com.github.pfichtner.revoltusbautomationjava.mqtt.MqttClient</mainClass>
 						</transformer>
 					</transformers>
+					<filters>
+						<filter>
+							<artifact>org.eclipse.paho:mqtt-client</artifact>
+							<includes>
+								<include>org/eclipse/paho/client/mqttv3/**</include>
+							</includes>
+						</filter>
+					</filters>
 				</configuration>
 			</plugin>
 		</plugins>

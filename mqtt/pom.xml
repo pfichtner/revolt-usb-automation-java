@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.github.pfichtner.revoltusbautomationjava</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.3</version>
+		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.github.pfichtner.revoltusbautomationjava</groupId>
 			<artifactId>library</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.paho</groupId>

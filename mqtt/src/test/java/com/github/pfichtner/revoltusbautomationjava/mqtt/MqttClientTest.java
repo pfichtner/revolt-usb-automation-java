@@ -14,6 +14,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.dna.mqtt.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.Test;
 
@@ -47,8 +48,7 @@ public class MqttClientTest {
 
 			try {
 				startClientInBackground(exceptions, client, topic);
-				mqttClient.publish(topic, new MqttMessage((outlet.getIndex()
-						+ "=" + state.getIdentifier()).getBytes()));
+				switchOutlet(mqttClient, topic, outlet, state);
 				TimeUnit.SECONDS.sleep(3);
 			} finally {
 				mqttClient.disconnect();
@@ -62,6 +62,20 @@ public class MqttClientTest {
 				new MessageBuilder().build(Function.of(outlet, state))
 						.asBytes());
 		verifyNoMoreInteractions(mock);
+	}
+
+	private void switchOutlet(
+			org.eclipse.paho.client.mqttv3.MqttClient mqttClient, String topic,
+			Outlet outlet, State state) throws MqttException,
+			MqttPersistenceException {
+		if (!topic.endsWith("/")) {
+			topic += '/';
+		}
+		String m = topic + "outlet" + outlet.getIndex() + "/value/set";
+		String p = Boolean.valueOf(state == State.ON).toString();
+		System.out.println(m);
+		System.out.println(p);
+		mqttClient.publish(m, new MqttMessage(p.getBytes()));
 	}
 
 	@Test
@@ -92,8 +106,7 @@ public class MqttClientTest {
 			org.eclipse.paho.client.mqttv3.MqttClient mqttClient = mqttClient();
 			try {
 				startClientInBackground(exceptions, client, topic);
-				mqttClient.publish(topic, new MqttMessage((outlet.getIndex()
-						+ "=" + state.getIdentifier()).getBytes()));
+				switchOutlet(mqttClient, topic, outlet, state);
 				TimeUnit.SECONDS.sleep(3);
 			} finally {
 				mqttClient.disconnect();

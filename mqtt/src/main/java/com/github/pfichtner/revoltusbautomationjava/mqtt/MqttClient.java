@@ -98,7 +98,7 @@ public class MqttClient {
 				}
 				try {
 					client.connect();
-					client.subscribe(MqttClient.this.brokerTopic + '#');
+					client.subscribe(subscribeToTopic());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -186,7 +186,7 @@ public class MqttClient {
 			this.client = connect(this.brokerHost, this.brokerPort,
 					this.clientId);
 			try {
-				this.client.subscribe(this.brokerTopic);
+				this.client.subscribe(subscribeToTopic());
 				this.client.setCallback(new Callback(usb, messageGenerator));
 				wait4ever();
 			} finally {
@@ -197,6 +197,10 @@ public class MqttClient {
 			usb.close();
 		}
 
+	}
+
+	private String subscribeToTopic() {
+		return this.brokerTopic + '#';
 	}
 
 	private static Integer tryParse(String string) {

@@ -1,7 +1,11 @@
 package com.github.pfichtner.revoltusbautomationjava.mqtt;
 
+import static java.lang.Boolean.parseBoolean;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -22,8 +26,11 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class MqttClient {
 
-	@Option(name = "-brokerTopic", usage = "Topic to register")
-	private String brokerTopic = "home/automation/px1675";
+	@Option(name = "-brokerTopic", usage = "Topic to register. To switch outlets a message of the form $brokerTopic/$enumeratedName$NUM/value/set must be sent")
+	private String brokerTopic = "home/devices/px1675/";
+
+	@Option(name = "-enumeratedName", usage = "Name for the outlets. To switch outlets a message of the form $brokerTopic/$enumeratedName$NUM/value/set must be sent")
+	private String enumeratedName = "outlet";
 
 	@Option(name = "-brokerHost", usage = "Hostname of the broker to connect to")
 	private String brokerHost = "localhost";
@@ -67,6 +74,8 @@ public class MqttClient {
 	@Option(name = "--usbTimeout", hidden = true, usage = "usb send timeout in milliseconds")
 	private Long timeout;
 
+	private Pattern topicPattern;
+
 	private org.eclipse.paho.client.mqttv3.MqttClient client;
 
 	public class Callback implements MqttCallback {
@@ -89,7 +98,7 @@ public class MqttClient {
 				}
 				try {
 					client.connect();
-					client.subscribe(MqttClient.this.brokerTopic);
+					client.subscribe(MqttClient.this.brokerTopic + '#');
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -98,17 +107,18 @@ public class MqttClient {
 
 		public void messageArrived(String topic, MqttMessage message)
 				throws IOException {
-			String payload = new String(message.getPayload());
-			String[] split = payload.split("\\=");
-			if (split.length == 2) {
-				Integer outlet = tryParse(Trimmer.on('0').trim(split[0]));
-				boolean isAll = "ALL".equalsIgnoreCase(split[0]);
+			Matcher matcher = MqttClient.this.topicPattern.matcher(topic);
+			if (matcher.matches()) {
+				Integer outlet = tryParse(Trimmer.on('0')
+						.trim(matcher.group(1)));
+				boolean isAll = "ALL".equalsIgnoreCase(matcher.group(1));
 				if (outlet != null || isAll) {
 					Outlet[] outlets = isAll ? Outlet.all()
 							: new Outlet[] { Outlet.of(outlet.intValue()) };
+					State state = parseBoolean(new String(message.getPayload())) ? State.ON
+							: State.OFF;
 					this.usb.write(this.messageBuilder.build(
-							Function.of(outlets, State.forString(split[1])))
-							.asBytes());
+							Function.of(outlets, state)).asBytes());
 				}
 			}
 		}
@@ -120,7 +130,8 @@ public class MqttClient {
 	}
 
 	public void setBrokerTopic(String brokerTopic) {
-		this.brokerTopic = brokerTopic;
+		this.brokerTopic = brokerTopic.endsWith("/") ? brokerTopic
+				: brokerTopic + '/';
 	}
 
 	public static void main(String[] args) throws MqttException,
@@ -165,6 +176,10 @@ public class MqttClient {
 			return;
 		}
 
+		// ensure brokerTopic is normalized
+		setBrokerTopic(this.brokerTopic);
+		this.topicPattern = Pattern.compile(this.brokerTopic
+				+ this.enumeratedName + "(\\w+)/value/set");
 		Usb usb = newUsb();
 		MessageBuilder messageGenerator = newMessageGenerator();
 		try {

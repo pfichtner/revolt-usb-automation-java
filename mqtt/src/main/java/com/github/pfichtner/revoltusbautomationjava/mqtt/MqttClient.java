@@ -9,8 +9,10 @@ import java.util.regex.Pattern;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -40,6 +42,11 @@ public class MqttClient {
 
 	@Option(name = "-clientId", usage = "This client's name")
 	private String clientId = "px1675";
+
+	@Option(name = "-publishClientInfo", usage = "When set, publish messages on connect/disconnect under this topic")
+	private String publishClientInfoTopic;
+
+	// ---------------------------------------------------------------------------
 
 	@Option(name = "-vendorId", usage = "VendorId of the revolt usb stick")
 	private short vendorId = (short) 0xffff;
@@ -78,7 +85,7 @@ public class MqttClient {
 
 	private org.eclipse.paho.client.mqttv3.MqttClient client;
 
-	public class Callback implements MqttCallback {
+	private class Callback implements MqttCallback {
 
 		private final Usb usb;
 		private final MessageBuilder messageBuilder;
@@ -89,7 +96,6 @@ public class MqttClient {
 		}
 
 		public void connectionLost(Throwable cause) {
-			org.eclipse.paho.client.mqttv3.MqttClient client = MqttClient.this.client;
 			do {
 				try {
 					TimeUnit.SECONDS.sleep(1);
@@ -97,12 +103,12 @@ public class MqttClient {
 					Thread.currentThread().interrupt();
 				}
 				try {
-					client.connect();
-					client.subscribe(subscribeToTopic());
+					connect();
+					subscribe();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} while (!client.isConnected());
+			} while (!MqttClient.this.client.isConnected());
 		}
 
 		public void messageArrived(String topic, MqttMessage message)
@@ -132,6 +138,10 @@ public class MqttClient {
 	public void setBrokerTopic(String brokerTopic) {
 		this.brokerTopic = brokerTopic.endsWith("/") ? brokerTopic
 				: brokerTopic + '/';
+	}
+
+	public void setPublishClientInfoTopic(String publishClientInfoTopic) {
+		this.publishClientInfoTopic = publishClientInfoTopic;
 	}
 
 	public static void main(String[] args) throws MqttException,
@@ -183,10 +193,11 @@ public class MqttClient {
 		Usb usb = newUsb();
 		MessageBuilder messageGenerator = newMessageGenerator();
 		try {
-			this.client = connect(this.brokerHost, this.brokerPort,
+			this.client = newClient(this.brokerHost, this.brokerPort,
 					this.clientId);
+			connect();
 			try {
-				this.client.subscribe(subscribeToTopic());
+				subscribe();
 				this.client.setCallback(new Callback(usb, messageGenerator));
 				wait4ever();
 			} finally {
@@ -199,8 +210,43 @@ public class MqttClient {
 
 	}
 
-	private String subscribeToTopic() {
-		return this.brokerTopic + '#';
+	private void connect() throws MqttSecurityException, MqttException {
+		this.client.connect(mqttConnectOptions());
+		publishClientStatus(Boolean.TRUE);
+	}
+
+	private void publishClientStatus(Boolean state) throws MqttException,
+			MqttPersistenceException {
+		if (publishClientStatus()) {
+			this.client.publish(this.publishClientInfoTopic, state.toString()
+					.getBytes(), 0, false);
+		}
+	}
+
+	public void disconnect() throws MqttException {
+		// "kill" the callback since it retries to reconnect
+		this.client.setCallback(null);
+		publishClientStatus(Boolean.FALSE);
+		this.client.disconnect();
+	}
+
+	private MqttConnectOptions mqttConnectOptions() {
+		MqttConnectOptions options = new MqttConnectOptions();
+		String topic = this.publishClientInfoTopic;
+		if (publishClientStatus()) {
+			options.setWill(topic, Boolean.FALSE.toString().getBytes(), 0,
+					false);
+		}
+		return options;
+	}
+
+	private boolean publishClientStatus() {
+		return this.publishClientInfoTopic != null
+				&& !this.publishClientInfoTopic.isEmpty();
+	}
+
+	private void subscribe() throws MqttException {
+		this.client.subscribe(this.brokerTopic + '#');
 	}
 
 	private static Integer tryParse(String string) {
@@ -218,13 +264,11 @@ public class MqttClient {
 		}
 	}
 
-	private org.eclipse.paho.client.mqttv3.MqttClient connect(String host,
+	private org.eclipse.paho.client.mqttv3.MqttClient newClient(String host,
 			int port, String clientId) throws MqttException,
 			MqttSecurityException {
-		org.eclipse.paho.client.mqttv3.MqttClient client = new org.eclipse.paho.client.mqttv3.MqttClient(
-				"tcp://" + host + ":" + port, clientId);
-		client.connect();
-		return client;
+		return new org.eclipse.paho.client.mqttv3.MqttClient("tcp://" + host
+				+ ":" + port, clientId);
 	}
 
 	public boolean isConnected() {

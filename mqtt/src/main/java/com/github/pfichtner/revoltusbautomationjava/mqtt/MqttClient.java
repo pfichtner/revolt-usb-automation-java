@@ -85,6 +85,8 @@ public class MqttClient {
 
 	private org.eclipse.paho.client.mqttv3.MqttClient client;
 
+	private static final boolean retained = true;
+
 	private class Callback implements MqttCallback {
 
 		private final Usb usb;
@@ -219,7 +221,7 @@ public class MqttClient {
 			MqttPersistenceException {
 		if (publishClientStatus()) {
 			this.client.publish(this.publishClientInfoTopic, state.toString()
-					.getBytes(), 0, false);
+					.getBytes(), 0, retained);
 		}
 	}
 
@@ -235,7 +237,7 @@ public class MqttClient {
 		String topic = this.publishClientInfoTopic;
 		if (publishClientStatus()) {
 			options.setWill(topic, Boolean.FALSE.toString().getBytes(), 0,
-					false);
+					retained);
 		}
 		return options;
 	}

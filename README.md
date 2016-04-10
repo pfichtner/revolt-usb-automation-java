@@ -1,4 +1,4 @@
-# revolt-usb-automation-java [![Build Status](https://buildhive.cloudbees.com/job/pfichtner/job/revolt-usb-automation-java/badge/icon)](https://buildhive.cloudbees.com/job/pfichtner/job/revolt-usb-automation-java/)
+# revolt-usb-automation-java [![Build Status](https://travis-ci.org/pfichtner/revolt-usb-automation-java.svg?branch=master)](https://travis-ci.org/pfichtner/revolt-usb-automation-java)
 
 Java example to command wireless 433mhz power outlets
 

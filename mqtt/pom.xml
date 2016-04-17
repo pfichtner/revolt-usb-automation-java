@@ -10,17 +10,16 @@
 
 	<repositories>
 		<repository>
-			<id>central</id>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</repository>
-
-		<repository>
 			<id>Eclipse Paho Repo</id>
 			<url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
 		</repository>
 		<repository>
 			<id>bintray</id>
 			<url>http://dl.bintray.com/andsel/maven/</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<url>http://repo.maven.apache.org/maven2</url>
 		</repository>
 	</repositories>
 

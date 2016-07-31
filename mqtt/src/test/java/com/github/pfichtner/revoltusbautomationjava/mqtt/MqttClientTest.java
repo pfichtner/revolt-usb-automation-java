@@ -102,7 +102,7 @@ public class MqttClientTest {
 				}
 			};
 
-			String topic = "/foo/bar";
+			String topic = "foo/bar";
 			org.eclipse.paho.client.mqttv3.MqttClient mqttClient = mqttClient();
 
 			try {
@@ -139,7 +139,7 @@ public class MqttClientTest {
 			};
 			client.setPublishClientInfoTopic("clients/testclient");
 
-			String topic = "/foo/bar";
+			String topic = "foo/bar";
 			org.eclipse.paho.client.mqttv3.MqttClient mqttClient = mqttClient();
 			mqttClient.subscribe("clients/testclient");
 
@@ -216,7 +216,7 @@ public class MqttClientTest {
 				}
 			};
 
-			String topic = "/foo/bar";
+			String topic = "foo/bar";
 
 			Outlet outlet = Outlet.ONE;
 			State state = State.ON;

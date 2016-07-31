@@ -1,5 +1,7 @@
 package com.github.pfichtner.revoltusbautomationjava.cmdline;
 
+import static com.github.pfichtner.revoltusbautomationjava.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +19,8 @@ import com.github.pfichtner.revoltusbautomationjava.usb.Usb;
 
 public class Main {
 
+	private static final String VALID_OUTLETS = "1-4 or ALL";
+
 	@Option(name = "-vendorId", usage = "VendorId of the revolt usb stick")
 	private short vendorId = (short) 0xffff;
 
@@ -25,11 +29,13 @@ public class Main {
 
 	private Outlet[] outlets;
 
-	@Option(name = "-outlet", usage = "Outlet to switch", metaVar = "1-4 or ALL", required = true)
+	@Option(name = "-outlet", usage = "Outlet to switch", metaVar = VALID_OUTLETS, required = true)
 	public void setOutlet(String outlet) {
+		Integer outletNum = Integers.tryParse(Trimmer.on('0').trim(outlet));
 		this.outlets = "ALL".equalsIgnoreCase(outlet) ? Outlet.all()
-				: new Outlet[] { Outlet.of(Integer.parseInt(Trimmer.on('0')
-						.trim(outlet))) };
+				: new Outlet[] { Outlet.of(checkNotNull(outletNum,
+						"%s is not a valid option, valid values: %s", outlet,
+						VALID_OUTLETS)) };
 	}
 
 	@Option(name = "-state", usage = "State of the outlet to set", required = true)
@@ -50,6 +56,9 @@ public class Main {
 
 	@Option(name = "-msgFin")
 	private String msgFin;
+
+	@Option(name = "-h", hidden = true, usage = "Shows this help")
+	private boolean help;
 
 	// ------------------------------------------------------------------------
 
@@ -74,6 +83,10 @@ public class Main {
 			cmdLineParser.parseArgument(args);
 		} catch (CmdLineException e) {
 			System.err.println(e.getMessage());
+			cmdLineParser.printUsage(System.err);
+			return;
+		}
+		if (help) {
 			cmdLineParser.printUsage(System.err);
 			return;
 		}

@@ -6,9 +6,9 @@ public final class Preconditions {
 		super();
 	}
 
-	public static <T> T checkNotNull(T t, String message) {
+	public static <T> T checkNotNull(T t, String message, Object... args) {
 		if (t == null) {
-			throw new NullPointerException(message);
+			throw new NullPointerException(String.format(message, args));
 		}
 		return t;
 	}
